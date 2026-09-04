@@ -17,7 +17,7 @@ export const sidebarAdminBrandButtonStyle =
   "flex w-full items-center gap-3 rounded-xl text-left outline-none focus:ring-4 focus:ring-[#FFD21A]/20";
 
 export const sidebarAdminLogoStyle =
-  "size-12 shrink-0 rounded-xl bg-[#FFD21A] object-contain p-1";
+  "size-12 shrink-0 rounded-full bg-white object-contain p-0.5";
 
 export const sidebarAdminLogoFallbackStyle =
   "grid size-12 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-white/20";

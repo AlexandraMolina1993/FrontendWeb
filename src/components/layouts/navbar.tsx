@@ -11,6 +11,7 @@ import {
   MapPin,
   MessageSquare,
   Newspaper,
+  PackageOpen,
   Users,
   X,
 } from "lucide-react";
@@ -63,7 +64,7 @@ export const sidebarAdminItems: SidebarItem[] = [
     id: "dashboard",
     label: "Dashboard",
     section: "Instituto",
-    to: "/admin",
+    to: "/dashboard",
     end: true,
     icon: <LayoutDashboard />,
   },
@@ -79,7 +80,7 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "preinscripciones",
     label: "Preinscripciones",
-    to: "/admin/preinscripciones",
+    to: "/dashboard/preinscripciones",
     icon: <ClipboardList />,
   },
   {
@@ -127,6 +128,13 @@ export const sidebarAdminItems: SidebarItem[] = [
       { label: "Nuevo usuario", to: "/admin/usuarios/nuevo" },
       { label: "Ver usuarios", to: "/admin/usuarios" },
     ],
+  },
+  {
+    id: "componentes",
+    label: "Componentes UI",
+    section: "Herramientas",
+    to: "/dashboard/componentes",
+    icon: <PackageOpen />,
   },
 ];
 
@@ -191,7 +199,7 @@ export default function SidebarAdmin({
           <button
             type="button"
             onClick={() => {
-              navigate("/admin");
+              navigate("/dashboard");
               cerrar?.();
             }}
             className={sidebarAdminBrandButtonStyle}
@@ -199,7 +207,10 @@ export default function SidebarAdmin({
             {logo ? (
               <img src={logo} alt="" className={sidebarAdminLogoStyle} />
             ) : (
-              <span className={sidebarAdminLogoFallbackStyle} aria-label={nombreCorto}>
+              <span
+                className={sidebarAdminLogoFallbackStyle}
+                aria-label={nombreCorto}
+              >
                 <span className="grid grid-cols-2 gap-0.5" aria-hidden="true">
                   <span className="size-3 bg-[#FFD21A]" />
                   <span className="size-3 bg-[#FFD21A]" />
@@ -226,7 +237,6 @@ export default function SidebarAdmin({
         </header>
 
         <nav className={sidebarAdminNavStyle}>
-
           {items.map((item, index) => {
             const tieneSubmenu = Boolean(item.subitems?.length);
             const estaAbierto = menuAbierto === item.id;
@@ -236,7 +246,9 @@ export default function SidebarAdmin({
             if (!tieneSubmenu && item.to) {
               return (
                 <div key={item.id}>
-                  {mostrarSeccion && <p className={sidebarAdminTitleStyle}>{item.section}</p>}
+                  {mostrarSeccion && (
+                    <p className={sidebarAdminTitleStyle}>{item.section}</p>
+                  )}
                   <NavLink
                     to={item.to}
                     end={item.end}
@@ -245,7 +257,9 @@ export default function SidebarAdmin({
                       `${sidebarAdminItemStyle} ${isActive ? sidebarAdminActiveItemStyle : ""}`
                     }
                   >
-                    <span className={sidebarAdminItemIconStyle}>{item.icon}</span>
+                    <span className={sidebarAdminItemIconStyle}>
+                      {item.icon}
+                    </span>
                     <span>{item.label}</span>
                   </NavLink>
                 </div>
@@ -254,7 +268,9 @@ export default function SidebarAdmin({
 
             return (
               <div key={item.id}>
-                {mostrarSeccion && <p className={sidebarAdminTitleStyle}>{item.section}</p>}
+                {mostrarSeccion && (
+                  <p className={sidebarAdminTitleStyle}>{item.section}</p>
+                )}
                 <button
                   type="button"
                   onClick={() => alternarMenu(item.id)}
@@ -292,10 +308,16 @@ export default function SidebarAdmin({
 
         <footer className={sidebarAdminFooterStyle}>
           <div className="flex items-center gap-3 rounded-2xl bg-white/10 p-2.5">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#FFD21A] text-xs font-black text-[#171717]">AD</span>
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#FFD21A] text-xs font-black text-[#171717]">
+              AD
+            </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-white">Administración</p>
-              <p className="truncate text-xs text-slate-400">admin@isvdr.edu.ar</p>
+              <p className="truncate text-sm font-bold text-white">
+                Administración
+              </p>
+              <p className="truncate text-xs text-slate-400">
+                admin@isvdr.edu.ar
+              </p>
             </div>
             <button
               type="button"
