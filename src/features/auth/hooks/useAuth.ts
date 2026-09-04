@@ -18,8 +18,10 @@ export const useAuth = () => {
     try {
       // 1. Llamamos a la API
       const response = await authApi.login(credentials);
+      console.log("ESTO DEVUELVE EL LOGIN:", response);
       // 2. Si todo sale bien, guardamos el token y el usuario en el estado global
-      setCredentials(response.usuario, response.token);
+      setCredentials(response.data.usuario, response.data.accessToken);
+      
     } catch (err) {
       // 3. Si falla, capturamos el mensaje de error del backend
       if (err instanceof AxiosError && err.response) {
