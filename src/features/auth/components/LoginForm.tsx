@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 1. Importamos el enrutador
 import { useAuth } from '../hooks/useAuth';
-import '../../../index.css'; // Aseguramos que tome los estilos globales
+import '../../../index.css'; 
 
 export const LoginForm = () => {
-  // Solo importamos lo que necesitamos de nuestro hook
   const { login, isLoading, error } = useAuth();
+  const navigate = useNavigate(); // 2. Inicializamos el hook de navegación
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,16 +14,15 @@ export const LoginForm = () => {
     e.preventDefault();
     try {
       await login({ email, password });
-      // Si el login es exitoso, el enrutador detectará el cambio de estado 
-      // automáticamente y redirigirá al usuario.
+      // 3. Forzamos la redirección al panel de administración que creamos
+      navigate('/admin/usuarios');
     } catch (err) {
-      // El error ya se maneja y se muestra visualmente gracias al estado 'error' del hook
+      // El error se muestra visualmente gracias al hook
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-      {/* Mostrar error si las credenciales son incorrectas */}
       {error && (
         <div style={{ color: 'red', marginBottom: '1rem', fontWeight: 'bold' }}>
           {error}
