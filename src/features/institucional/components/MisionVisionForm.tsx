@@ -1,0 +1,3 @@
+import type { InstitucionalFormValues } from "../schemas/institucional.schema";
+import Textarea from "../../../components/ui/textarea";
+export default function MisionVisionForm({ values, onChange }: { values: InstitucionalFormValues; onChange: (values: InstitucionalFormValues) => void }) { return <div className="grid gap-5 md:grid-cols-2"><Textarea label="Misión" rows={5} value={values.mision} onChange={(event) => onChange({ ...values, mision: event.target.value })} /><Textarea label="Visión" rows={5} value={values.vision} onChange={(event) => onChange({ ...values, vision: event.target.value })} /></div>; }
