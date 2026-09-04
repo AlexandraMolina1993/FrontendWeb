@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-// Creamos la instancia principal con la URL del backend
+export const API_URL = import.meta.env.VITE_API_URL;
+export const API_DOCS_URL = import.meta.env.VITE_API_DOCS_URL;
+
 export const apiClient = axios.create({
-  baseURL: 'https://api-instituto.onrender.com/api',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },

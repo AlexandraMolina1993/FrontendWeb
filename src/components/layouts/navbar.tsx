@@ -71,11 +71,8 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "carreras",
     label: "Carreras",
+    to: "/admin/carreras",
     icon: <GraduationCap />,
-    subitems: [
-      { label: "Nueva carrera", to: "/admin/carreras/nueva" },
-      { label: "Ver carreras", to: "/admin/carreras" },
-    ],
   },
   {
     id: "preinscripciones",
