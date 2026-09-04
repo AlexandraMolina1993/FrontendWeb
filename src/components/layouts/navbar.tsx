@@ -3,12 +3,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import {
   Building2,
   ChevronDown,
+  ClipboardList,
   GraduationCap,
   Image,
   LayoutDashboard,
   LogOut,
   MapPin,
   MessageSquare,
+  Newspaper,
   Users,
   X,
 } from "lucide-react";
@@ -30,7 +32,6 @@ import {
   sidebarAdminItemStyle,
   sidebarAdminLogoFallbackStyle,
   sidebarAdminLogoStyle,
-  sidebarAdminLogoutButtonStyle,
   sidebarAdminNameStyle,
   sidebarAdminNavStyle,
   sidebarAdminOpenStyle,
@@ -51,6 +52,7 @@ export interface SidebarItem {
   id: string;
   label: string;
   icon: ReactNode;
+  section?: string;
   to?: string;
   end?: boolean;
   subitems?: SidebarSubitem[];
@@ -60,6 +62,7 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "dashboard",
     label: "Dashboard",
+    section: "Instituto",
     to: "/admin",
     end: true,
     icon: <LayoutDashboard />,
@@ -74,6 +77,12 @@ export const sidebarAdminItems: SidebarItem[] = [
     ],
   },
   {
+    id: "preinscripciones",
+    label: "Preinscripciones",
+    to: "/admin/preinscripciones",
+    icon: <ClipboardList />,
+  },
+  {
     id: "institucional",
     label: "Información institucional",
     to: "/admin/institucional",
@@ -82,11 +91,18 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "galeria",
     label: "Galería",
+    section: "Comunicación",
     icon: <Image />,
     subitems: [
       { label: "Agregar fotografías", to: "/admin/galeria/nueva" },
       { label: "Administrar galería", to: "/admin/galeria" },
     ],
+  },
+  {
+    id: "noticias",
+    label: "Noticias y actividades",
+    to: "/admin/noticias",
+    icon: <Newspaper />,
   },
   {
     id: "contacto",
@@ -165,6 +181,7 @@ export default function SidebarAdmin({
       )}
 
       <aside
+        id="sidebar-admin"
         className={`${sidebarAdminStyle} ${abierto ? sidebarAdminOpenStyle : sidebarAdminClosedStyle}`}
         aria-label="Navegación administrativa"
       >
@@ -182,8 +199,13 @@ export default function SidebarAdmin({
             {logo ? (
               <img src={logo} alt="" className={sidebarAdminLogoStyle} />
             ) : (
-              <span className={sidebarAdminLogoFallbackStyle}>
-                {nombreCorto}
+              <span className={sidebarAdminLogoFallbackStyle} aria-label={nombreCorto}>
+                <span className="grid grid-cols-2 gap-0.5" aria-hidden="true">
+                  <span className="size-3 bg-[#FFD21A]" />
+                  <span className="size-3 bg-[#FFD21A]" />
+                  <span className="size-3 bg-[#FFD21A]" />
+                  <span className="size-3 bg-[#171717]" />
+                </span>
               </span>
             )}
 
@@ -204,31 +226,35 @@ export default function SidebarAdmin({
         </header>
 
         <nav className={sidebarAdminNavStyle}>
-          <p className={sidebarAdminTitleStyle}>Menú principal</p>
 
-          {items.map((item) => {
+          {items.map((item, index) => {
             const tieneSubmenu = Boolean(item.subitems?.length);
             const estaAbierto = menuAbierto === item.id;
+            const mostrarSeccion =
+              item.section && item.section !== items[index - 1]?.section;
 
             if (!tieneSubmenu && item.to) {
               return (
-                <NavLink
-                  key={item.id}
-                  to={item.to}
-                  end={item.end}
-                  onClick={cerrar}
-                  className={({ isActive }) =>
-                    `${sidebarAdminItemStyle} ${isActive ? sidebarAdminActiveItemStyle : ""}`
-                  }
-                >
-                  <span className={sidebarAdminItemIconStyle}>{item.icon}</span>
-                  <span>{item.label}</span>
-                </NavLink>
+                <div key={item.id}>
+                  {mostrarSeccion && <p className={sidebarAdminTitleStyle}>{item.section}</p>}
+                  <NavLink
+                    to={item.to}
+                    end={item.end}
+                    onClick={cerrar}
+                    className={({ isActive }) =>
+                      `${sidebarAdminItemStyle} ${isActive ? sidebarAdminActiveItemStyle : ""}`
+                    }
+                  >
+                    <span className={sidebarAdminItemIconStyle}>{item.icon}</span>
+                    <span>{item.label}</span>
+                  </NavLink>
+                </div>
               );
             }
 
             return (
               <div key={item.id}>
+                {mostrarSeccion && <p className={sidebarAdminTitleStyle}>{item.section}</p>}
                 <button
                   type="button"
                   onClick={() => alternarMenu(item.id)}
@@ -265,15 +291,22 @@ export default function SidebarAdmin({
         </nav>
 
         <footer className={sidebarAdminFooterStyle}>
-          <button
-            type="button"
-            onClick={() => void salir()}
-            disabled={cerrandoSesion}
-            className={sidebarAdminLogoutButtonStyle}
-          >
-            <LogOut size={17} aria-hidden="true" />
-            {cerrandoSesion ? "Cerrando sesión..." : "Cerrar sesión"}
-          </button>
+          <div className="flex items-center gap-3 rounded-2xl bg-white/10 p-2.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#FFD21A] text-xs font-black text-[#171717]">AD</span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-bold text-white">Administración</p>
+              <p className="truncate text-xs text-slate-400">admin@isvdr.edu.ar</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void salir()}
+              disabled={cerrandoSesion}
+              className="grid size-9 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-[#FFD21A] hover:text-[#171717] disabled:opacity-50"
+              aria-label="Cerrar sesión"
+            >
+              <LogOut size={17} aria-hidden="true" />
+            </button>
+          </div>
         </footer>
       </aside>
     </>

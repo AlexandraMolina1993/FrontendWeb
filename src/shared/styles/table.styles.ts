@@ -6,7 +6,7 @@ export const tableScrollStyle = "w-full overflow-x-auto";
 export const tableStyle = "w-full border-collapse text-left text-sm";
 
 export const tableHeaderStyle =
-  "border-b border-slate-200 bg-[#171717] text-xs font-semibold uppercase tracking-wide text-white";
+  "border-b border-slate-200 bg-zinc-50 text-xs font-semibold text-zinc-600";
 
 export const tableHeaderCellStyle = "whitespace-nowrap px-4 py-3.5";
 
