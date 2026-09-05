@@ -1,3 +1,4 @@
+import AdminLayout from "../../../../components/layouts/applayout";
 import { useState } from "react";
 import { usePublicaciones } from "../../hooks/usePublicaciones";
 import { useCrearPublicacion } from "../../hooks/useCrearPublicacion";
@@ -55,6 +56,7 @@ export default function PublicacionesAdminPage() {
   }
 
   return (
+    <AdminLayout>
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Noticias y actividades</h1>
@@ -111,5 +113,6 @@ export default function PublicacionesAdminPage() {
         />
       )}
     </div>
+    </AdminLayout>
   );
 }

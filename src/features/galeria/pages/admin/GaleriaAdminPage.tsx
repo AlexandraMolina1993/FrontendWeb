@@ -10,6 +10,7 @@ import { AlbumDeleteDialog } from "../../components/admin/AlbumDeleteDialog";
 import { GalleryUploader } from "../../components/admin/GalleryUploader";
 import type { Album } from "../../types/album.types";
 import type { CrearAlbumFormValues } from "../../schemas/album.schema";
+import AdminLayout from "../../../../components/layouts/applayout";
 
 export default function GaleriaAdminPage() {
   const { data, isLoading, isError } = useAlbums();
@@ -60,6 +61,7 @@ export default function GaleriaAdminPage() {
   }
 
   return (
+    <AdminLayout>
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Galería</h1>
@@ -140,5 +142,6 @@ export default function GaleriaAdminPage() {
         />
       )}
     </div>
+    </AdminLayout>
   );
 }
