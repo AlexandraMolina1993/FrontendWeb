@@ -7,11 +7,16 @@ import SedesPage from "../../features/sedes/pages/public/SedesPage";
 import SedeDetallePage from "../../features/sedes/pages/public/SedeDetallePage";
 import SedesAdminPage from "../../features/sedes/pages/admin/SedesAdminPage";
 import SedeNuevaPage from "../../features/sedes/pages/admin/SedeNuevaPage";
+import { AdminRoutes } from "./admin.routes"; // IMPORTA MIS RUTAS
 
 export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirección para la raíz */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Tus rutas actuales */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
         <Route path="/dashboard/componentes" element={<Dashboard />} />
@@ -22,7 +27,11 @@ export const AppRouter = () => {
         <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
         <Route path="/admin/sedes" element={<SedesAdminPage />} />
         <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
+
+        {/* Mis rutas de administración */}
+        <AdminRoutes />
       </Routes>
     </BrowserRouter>
   );
 };
+
