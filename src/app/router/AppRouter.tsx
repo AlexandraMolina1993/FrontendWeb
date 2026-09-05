@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Dashboard from "../../features/Dashboard/views/Dashboard";
 import CarrerasAdminPage from "../../features/carreras/pages/CarrerasAdminPage";
 import InstitucionalPage from "../../features/institucional/pages/public/InstitucionalPage";
@@ -7,7 +7,7 @@ import SedesPage from "../../features/sedes/pages/public/SedesPage";
 import SedeDetallePage from "../../features/sedes/pages/public/SedeDetallePage";
 import SedesAdminPage from "../../features/sedes/pages/admin/SedesAdminPage";
 import SedeNuevaPage from "../../features/sedes/pages/admin/SedeNuevaPage";
-import { AdminRoutes } from "./admin.routes"; // IMPORTA MIS RUTAS
+import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage"; // IMPORTA MIS RUTAS
 
 export const AppRouter = () => {
   return (
@@ -28,8 +28,8 @@ export const AppRouter = () => {
         <Route path="/admin/sedes" element={<SedesAdminPage />} />
         <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
 
-        {/* Mis rutas de administración */}
-        <AdminRoutes />
+        
+        
       </Routes>
     </BrowserRouter>
   );
