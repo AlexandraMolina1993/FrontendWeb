@@ -10,6 +10,9 @@ import { AlbumDeleteDialog } from "../../components/admin/AlbumDeleteDialog";
 import { GalleryUploader } from "../../components/admin/GalleryUploader";
 import type { Album } from "../../types/album.types";
 import type { CrearAlbumFormValues } from "../../schemas/album.schema";
+import { useEliminarImagen } from "../../hooks/useEliminarImagen";
+import { useElegirPortada } from "../../hooks/useElegirPortada";
+import { useReactivarAlbum } from "../../hooks/useReactivarAlbum";
 import AdminLayout from "../../../../components/layouts/applayout";
 
 export default function GaleriaAdminPage() {
@@ -17,6 +20,9 @@ export default function GaleriaAdminPage() {
   const crear = useCrearAlbum();
   const actualizar = useActualizarAlbum();
   const eliminar = useEliminarAlbum();
+  const eliminarImagen = useEliminarImagen();
+  const elegirPortada = useElegirPortada();
+  const reactivarAlbum = useReactivarAlbum();
 
   const [mostrarForm, setMostrarForm] = useState(false);
   const [albumEditar, setAlbumEditar] = useState<Album | null>(null);
@@ -80,6 +86,7 @@ export default function GaleriaAdminPage() {
         onEditar={abrirEditar}
         onEliminar={setAlbumEliminar}
         onGestionarFotos={(album) => setAlbumGestionarId(album.id)}
+        onReactivar={(album) => reactivarAlbum.mutate(album.id)}
       />
 
       {mostrarForm && (
@@ -112,16 +119,41 @@ export default function GaleriaAdminPage() {
 
             <GalleryUploader albumId={albumGestionarId} />
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-4">
-              {albumGestionar.imagenes.map((imagen) => (
-                <img
-                  key={imagen.id}
-                  src={imagen.url}
-                  alt=""
-                  className="aspect-square object-cover rounded-md"
-                />
-              ))}
-            </div>
+<div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-4">
+  {albumGestionar.imagenes.map((imagen) => (
+    <div key={imagen.id} className="relative group">
+      <img
+        src={imagen.url}
+        alt=""
+        className="aspect-square object-cover rounded-md w-full"
+      />
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
+        <button
+          onClick={() =>
+            elegirPortada.mutate({
+              albumId: albumGestionarId!,
+              imagenId: imagen.id,
+            })
+          }
+          className="text-xs bg-yellow-500 text-black px-2 py-1 rounded"
+        >
+          Hacer portada
+        </button>
+        <button
+          onClick={() =>
+            eliminarImagen.mutate({
+              albumId: albumGestionarId!,
+              imagenId: imagen.id,
+            })
+          }
+          className="text-xs bg-red-600 text-white px-2 py-1 rounded"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
 
             <button
               onClick={() => setAlbumGestionarId(null)}
