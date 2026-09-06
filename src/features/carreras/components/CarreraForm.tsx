@@ -12,12 +12,12 @@ import type {
   CarreraModalidad,
 } from "../types/carrera.types";
 import {
+  CARRERA_DURACION_MAX,
+  CARRERA_DURACION_MIN,
   CARRERA_FORM_VACIO,
   CARRERA_MODALIDAD_LABELS,
   carreraAFormulario,
 } from "../types/carrera.types";
-
-import CarreraStatusSelector from "./CarreraStatusSelector";
 
 interface CarreraFormProps {
   carrera?: Partial<Carrera> | null;
@@ -90,8 +90,8 @@ export default function CarreraForm({
         <Input
           label="Duración en años"
           type="number"
-          min={1}
-          max={10}
+          min={CARRERA_DURACION_MIN}
+          max={CARRERA_DURACION_MAX}
           placeholder="Ej. 3"
           value={values.duracionAnios}
           disabled={cargando}
@@ -108,11 +108,6 @@ export default function CarreraForm({
           onChange={(event) =>
             actualizar("modalidad", event.target.value as CarreraModalidad)
           }
-        />
-        <CarreraStatusSelector
-          value={values.activa}
-          disabled={cargando}
-          onChange={(activa) => actualizar("activa", activa)}
         />
         <div className="sm:col-span-2">
           <Textarea
