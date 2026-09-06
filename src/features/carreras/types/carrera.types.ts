@@ -43,6 +43,13 @@ export interface CarreraInput {
 
 export type CarreraUpdateInput = Partial<CarreraInput>;
 
+/** Datos mínimos de GET /sedes para el selector del formulario. */
+export interface SedeOpcion {
+  id: string;
+  nombre: string;
+  ciudad?: string;
+}
+
 export interface CarreraFormValues {
   nombre: string;
   descripcion: string;
