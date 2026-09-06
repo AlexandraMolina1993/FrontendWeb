@@ -14,14 +14,13 @@ import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPag
 import { AdminRoutes } from "./admin.routes"; // IMPORTA MIS RUTAS
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage"; // IMPORTA MIS RUTAS
 
-
 export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
         {/* Redirección para la raíz */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        
+
         {/* Tus rutas actuales */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
@@ -32,7 +31,10 @@ export const AppRouter = () => {
         <Route path="/institucional" element={<InstitucionalPage />} />
         <Route path="/sedes" element={<SedesPage />} />
         <Route path="/sedes/:slug" element={<SedeDetallePage />} />
-        <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
+        <Route
+          path="/admin/institucional"
+          element={<InstitucionalAdminPage />}
+        />
         <Route path="/admin/sedes" element={<SedesAdminPage />} />
         <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
 
@@ -45,4 +47,3 @@ export const AppRouter = () => {
     </BrowserRouter>
   );
 };
-
