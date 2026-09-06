@@ -1,0 +1,2 @@
+import { Clock3 } from "lucide-react";
+export default function SedeSchedule({ horario }: { horario: string | null }) { return <div className="rounded-3xl border border-zinc-200 bg-white p-6"><div className="flex items-center gap-2 font-bold text-[#171717]"><Clock3 size={18} className="text-[#C49200]" /> Horarios</div><p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">{horario || "Consultar horarios de atención."}</p></div>; }

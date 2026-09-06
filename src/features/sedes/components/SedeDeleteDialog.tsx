@@ -1,0 +1,2 @@
+import Button from "../../../components/ui/button";
+export default function SedeDeleteDialog({ nombre, onConfirm, onCancel }: { nombre: string; onConfirm: () => void; onCancel: () => void }) { return <div className="space-y-5"><p className="text-slate-600">¿Querés eliminar la sede <strong>{nombre}</strong>? Esta acción no se puede deshacer.</p><div className="flex justify-end gap-3"><Button variant="secondary" onClick={onCancel}>Cancelar</Button><Button variant="danger" onClick={onConfirm}>Eliminar</Button></div></div>; }

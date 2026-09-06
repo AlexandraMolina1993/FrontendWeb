@@ -1,0 +1,4 @@
+import ErrorState from "../../../../components/ui/errorState";
+import { useSedes } from "../../hooks/useSedes";
+import SedesGrid from "../../components/SedesGrid";
+export default function SedesPage() { const { sedes, cargando, error, recargar } = useSedes(); return <main className="mx-auto max-w-6xl space-y-8 px-5 py-8 sm:py-12"><header><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C49200]">Encontranos</p><h1 className="mt-2 text-4xl font-black tracking-tight text-[#171717]">Nuestras sedes</h1><p className="mt-3 max-w-2xl text-slate-600">Conocé nuestros espacios de formación, atención y encuentro.</p></header>{error ? <ErrorState title="No pudimos cargar las sedes" description={error} onRetry={recargar} /> : <SedesGrid sedes={sedes} cargando={cargando} />}</main>; }

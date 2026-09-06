@@ -1,0 +1,9 @@
+import Button from "../../../components/ui/button";
+import Input from "../../../components/ui/input";
+import Textarea from "../../../components/ui/textarea";
+import type { InstitucionalFormValues } from "../schemas/institucional.schema";
+import ValoresInput from "./ValoresInput";
+export default function InstitucionalForm({ values, onChange, onSubmit, guardando }: { values: InstitucionalFormValues; onChange: (values: InstitucionalFormValues) => void; onSubmit: () => void; guardando?: boolean }) {
+  const cambiar = (field: keyof InstitucionalFormValues, value: string) => onChange({ ...values, [field]: value });
+  return <form onSubmit={(event) => { event.preventDefault(); onSubmit(); }} className="space-y-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"><div className="grid gap-5 md:grid-cols-2"><Input label="Nombre de la institución" required value={values.nombreInstitucion} onChange={(event) => cambiar("nombreInstitucion", event.target.value)} /><Input label="Lema" value={values.lema} onChange={(event) => cambiar("lema", event.target.value)} /></div><Textarea label="Historia" required rows={6} value={values.historia} onChange={(event) => cambiar("historia", event.target.value)} /><div className="grid gap-5 md:grid-cols-2"><Textarea label="Misión" required rows={5} value={values.mision} onChange={(event) => cambiar("mision", event.target.value)} /><Textarea label="Visión" required rows={5} value={values.vision} onChange={(event) => cambiar("vision", event.target.value)} /></div><ValoresInput valores={values.valores} onChange={(valores) => onChange({ ...values, valores })} /><div className="flex justify-end"><Button type="submit" disabled={guardando}>{guardando ? "Guardando..." : "Guardar información"}</Button></div></form>;
+}

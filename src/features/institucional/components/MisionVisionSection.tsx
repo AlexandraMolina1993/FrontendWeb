@@ -1,0 +1,4 @@
+import Card from "../../../components/ui/card";
+export default function MisionVisionSection({ mision, vision }: { mision: string; vision: string }) {
+  return <div className="grid gap-5 md:grid-cols-2"><Card><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C49200]">Misión</p><p className="mt-4 whitespace-pre-line text-lg leading-8 text-slate-600">{mision || "Información en actualización."}</p></Card><Card><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C49200]">Visión</p><p className="mt-4 whitespace-pre-line text-lg leading-8 text-slate-600">{vision || "Información en actualización."}</p></Card></div>;
+}
