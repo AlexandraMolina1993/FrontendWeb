@@ -1,12 +1,18 @@
 import { apiClient } from "../../../shared/lib/api/client";
 import { validateResponse } from "../../../shared/lib/validation/validate-response";
 
-import { isCarrera, isCarreraList, validarFiltros } from "../schemas/carrera.schema";
+import {
+  isCarrera,
+  isCarreraList,
+  isSedeOpcionList,
+  validarFiltros,
+} from "../schemas/carrera.schema";
 import type {
   Carrera,
   CarreraInput,
   CarreraListParams,
   CarreraUpdateInput,
+  SedeOpcion,
 } from "../types/carrera.types";
 
 function paramsLimpios(params: CarreraListParams = {}) {
@@ -114,5 +120,19 @@ export const carreraApi = {
   eliminarDefinitivo: async (id: string): Promise<void> => {
     assertId(id);
     await apiClient.delete(`/carreras/${id}/definitivo`);
+  },
+
+  /**
+   * Sedes activas para asignar a una carrera.
+   * GET /api/sedes
+   */
+  listarSedes: async (signal?: AbortSignal): Promise<SedeOpcion[]> => {
+    const response = await apiClient.get<unknown>("/sedes", { signal });
+
+    return validateResponse(
+      response.data,
+      isSedeOpcionList,
+      "El listado de sedes no tiene el formato esperado.",
+    );
   },
 };

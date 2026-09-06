@@ -4,6 +4,7 @@ import type {
   CarreraInput,
   CarreraListParams,
   CarreraModalidad,
+  SedeOpcion,
 } from "../types/carrera.types";
 import {
   CARRERA_DURACION_MAX,
@@ -50,6 +51,24 @@ export function isCarrera(value: unknown): value is Carrera {
 
 export function isCarreraList(value: unknown): value is Carrera[] {
   return Array.isArray(value) && value.every(isCarrera);
+}
+
+export function isSedeOpcion(value: unknown): value is SedeOpcion {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.id === "string" &&
+    value.id.length > 0 &&
+    typeof value.nombre === "string" &&
+    value.nombre.length > 0 &&
+    (value.ciudad === undefined ||
+      value.ciudad === null ||
+      typeof value.ciudad === "string")
+  );
+}
+
+export function isSedeOpcionList(value: unknown): value is SedeOpcion[] {
+  return Array.isArray(value) && value.every(isSedeOpcion);
 }
 
 export function validarBusqueda(buscar: string): string | undefined {
