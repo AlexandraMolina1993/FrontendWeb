@@ -19,7 +19,6 @@ export function useCarrera(id: string | null) {
       return;
     }
 
-    const carreraId = id;
     const controller = new AbortController();
 
     async function cargar() {
@@ -27,7 +26,7 @@ export function useCarrera(id: string | null) {
       setError(null);
 
       try {
-        const data = await carreraApi.obtenerPorId(carreraId, controller.signal);
+        const data = await carreraApi.obtenerPorId(id, controller.signal);
         setCarrera(data);
       } catch (err) {
         if (controller.signal.aborted || axios.isCancel(err)) return;
