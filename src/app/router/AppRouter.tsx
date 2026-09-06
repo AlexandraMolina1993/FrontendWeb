@@ -7,6 +7,9 @@ import SedesPage from "../../features/sedes/pages/public/SedesPage";
 import SedeDetallePage from "../../features/sedes/pages/public/SedeDetallePage";
 import SedesAdminPage from "../../features/sedes/pages/admin/SedesAdminPage";
 import SedeNuevaPage from "../../features/sedes/pages/admin/SedeNuevaPage";
+import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/PublicacionesAdminPage";
+import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
+import { AdminRoutes } from "./admin.routes"; // IMPORTA MIS RUTAS
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage"; // IMPORTA MIS RUTAS
 
 export const AppRouter = () => {
@@ -28,8 +31,11 @@ export const AppRouter = () => {
         <Route path="/admin/sedes" element={<SedesAdminPage />} />
         <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
 
-        
-        
+        <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
+        <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
+        <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
+        {/* Mis rutas de administración */}
+        {/* <AdminRoutes /> */}
       </Routes>
     </BrowserRouter>
   );
