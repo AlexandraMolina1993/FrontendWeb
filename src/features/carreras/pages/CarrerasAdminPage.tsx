@@ -17,6 +17,7 @@ import CarreraSearch from "../components/CarreraSearch";
 import CarrerasGrid from "../components/CarrerasGrid";
 import { useCarrera } from "../hooks/useCarrera";
 import { useCarreras } from "../hooks/useCarreras";
+import { useSedesOpciones } from "../hooks/useSedesOpciones";
 import { formularioACarreraInput, validarBusqueda } from "../schemas/carrera.schema";
 import { carreraApi } from "../services/carrera.api";
 import type { Carrera, CarreraFiltros, CarreraFormValues } from "../types/carrera.types";
@@ -55,6 +56,14 @@ export default function CarrerasAdminPage() {
     cargando: cargandoDetalle,
     error: errorDetalle,
   } = useCarrera(modal === "preview" && carreraActiva ? carreraActiva.id : null);
+
+  const formularioAbierto = modal === "crear" || modal === "editar";
+  const {
+    sedes: sedesOpciones,
+    cargando: cargandoSedes,
+    error: errorSedes,
+    recargar: recargarSedes,
+  } = useSedesOpciones(formularioAbierto);
 
   const carreraModal = carreraDetalle ?? carreraActiva;
 
@@ -221,6 +230,10 @@ export default function CarrerasAdminPage() {
             onSubmit={(values) => void guardarCarrera(values)}
             onCancel={cerrarModal}
             cargando={guardando}
+            sedesOpciones={sedesOpciones}
+            cargandoSedes={cargandoSedes}
+            errorSedes={errorSedes}
+            onReintentarSedes={recargarSedes}
           />
         )}
 
