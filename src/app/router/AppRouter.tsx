@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Dashboard from "../../features/Dashboard/views/Dashboard";
 import CarrerasAdminPage from "../../features/carreras/pages/CarrerasAdminPage";
 import InstitucionalPage from "../../features/institucional/pages/public/InstitucionalPage";
@@ -10,6 +10,7 @@ import SedeNuevaPage from "../../features/sedes/pages/admin/SedeNuevaPage";
 import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/PublicacionesAdminPage";
 import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
 import { AdminRoutes } from "./admin.routes"; // IMPORTA MIS RUTAS
+import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage"; // IMPORTA MIS RUTAS
 
 export const AppRouter = () => {
   return (
@@ -29,6 +30,7 @@ export const AppRouter = () => {
         <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
         <Route path="/admin/sedes" element={<SedesAdminPage />} />
         <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
+
         <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
         <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
         <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
