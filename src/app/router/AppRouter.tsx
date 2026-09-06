@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Dashboard from "../../features/Dashboard/views/Dashboard";
+import CarreraDetallePage from "../../features/carreras/pages/CarreraDetallePage";
 import CarrerasAdminPage from "../../features/carreras/pages/CarrerasAdminPage";
+import CarrerasPage from "../../features/carreras/pages/CarrerasPage";
 import InstitucionalPage from "../../features/institucional/pages/public/InstitucionalPage";
 import InstitucionalAdminPage from "../../features/institucional/pages/admin/InstitucionalAdminPage";
 import SedesPage from "../../features/sedes/pages/public/SedesPage";
@@ -11,6 +13,7 @@ import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/Pub
 import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
 import { AdminRoutes } from "./admin.routes"; // IMPORTA MIS RUTAS
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage"; // IMPORTA MIS RUTAS
+
 
 export const AppRouter = () => {
   return (
@@ -23,6 +26,8 @@ export const AppRouter = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
         <Route path="/dashboard/componentes" element={<Dashboard />} />
+        <Route path="/carreras" element={<CarrerasPage />} />
+        <Route path="/carreras/:id" element={<CarreraDetallePage />} />
         <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
         <Route path="/institucional" element={<InstitucionalPage />} />
         <Route path="/sedes" element={<SedesPage />} />

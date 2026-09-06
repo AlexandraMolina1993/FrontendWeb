@@ -31,13 +31,25 @@ export interface CarreraFiltros {
   modalidad: CarreraModalidad | "";
 }
 
+/** Body de POST /carreras y base de PATCH /carreras/{id}. */
+export interface CarreraInput {
+  nombre: string;
+  modalidad: CarreraModalidad;
+  descripcion?: string | null;
+  duracionAnios?: number | null;
+  tituloOtorgado?: string | null;
+  sedes?: string[];
+}
+
+export type CarreraUpdateInput = Partial<CarreraInput>;
+
 export interface CarreraFormValues {
   nombre: string;
   descripcion: string;
   duracionAnios: string;
   tituloOtorgado: string;
   modalidad: CarreraModalidad;
-  activa: boolean;
+  sedes: string[];
 }
 
 export const CARRERA_MODALIDADES: CarreraModalidad[] = [
@@ -52,13 +64,16 @@ export const CARRERA_MODALIDAD_LABELS: Record<CarreraModalidad, string> = {
   HIBRIDA: "Híbrida",
 };
 
+export const CARRERA_DURACION_MIN = 1;
+export const CARRERA_DURACION_MAX = 15;
+
 export const CARRERA_FORM_VACIO: CarreraFormValues = {
   nombre: "",
   descripcion: "",
   duracionAnios: "",
   tituloOtorgado: "",
   modalidad: "PRESENCIAL",
-  activa: true,
+  sedes: [],
 };
 
 export function carreraAFormulario(carrera?: Partial<Carrera> | null): CarreraFormValues {
@@ -70,7 +85,7 @@ export function carreraAFormulario(carrera?: Partial<Carrera> | null): CarreraFo
       carrera?.duracionAnios != null ? String(carrera.duracionAnios) : "",
     tituloOtorgado: carrera?.tituloOtorgado ?? "",
     modalidad: carrera?.modalidad ?? "PRESENCIAL",
-    activa: carrera?.activa ?? true,
+    sedes: [],
   };
 }
 

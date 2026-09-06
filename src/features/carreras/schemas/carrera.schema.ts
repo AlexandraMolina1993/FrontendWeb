@@ -1,10 +1,15 @@
 import type {
   Carrera,
   CarreraFormValues,
+  CarreraInput,
   CarreraListParams,
   CarreraModalidad,
 } from "../types/carrera.types";
-import { CARRERA_MODALIDADES } from "../types/carrera.types";
+import {
+  CARRERA_DURACION_MAX,
+  CARRERA_DURACION_MIN,
+  CARRERA_MODALIDADES,
+} from "../types/carrera.types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -103,8 +108,12 @@ export function validarCarreraForm(
   if (values.duracionAnios.trim()) {
     const anios = Number(values.duracionAnios);
 
-    if (!Number.isInteger(anios) || anios < 1 || anios > 10) {
-      errores.duracionAnios = "Ingresá un número entero entre 1 y 10.";
+    if (
+      !Number.isInteger(anios) ||
+      anios < CARRERA_DURACION_MIN ||
+      anios > CARRERA_DURACION_MAX
+    ) {
+      errores.duracionAnios = `Ingresá un número entero entre ${CARRERA_DURACION_MIN} y ${CARRERA_DURACION_MAX}.`;
     }
   }
 
@@ -112,7 +121,40 @@ export function validarCarreraForm(
     errores.modalidad = "Seleccioná una modalidad válida.";
   }
 
+  if (values.sedes.some((sede) => !sede.trim())) {
+    errores.sedes = "Cada sede tiene que tener un identificador válido.";
+  }
+
   return errores;
+}
+
+export function formularioACarreraInput(values: CarreraFormValues): CarreraInput {
+  const input: CarreraInput = {
+    nombre: values.nombre.trim(),
+    modalidad: values.modalidad,
+  };
+
+  const descripcion = values.descripcion.trim();
+  const titulo = values.tituloOtorgado.trim();
+  const sedes = values.sedes.map((sede) => sede.trim()).filter(Boolean);
+
+  if (descripcion) {
+    input.descripcion = descripcion;
+  }
+
+  if (titulo) {
+    input.tituloOtorgado = titulo;
+  }
+
+  if (values.duracionAnios.trim()) {
+    input.duracionAnios = Number(values.duracionAnios);
+  }
+
+  if (sedes.length > 0) {
+    input.sedes = sedes;
+  }
+
+  return input;
 }
 
 export function formularioEsValido(values: CarreraFormValues): boolean {

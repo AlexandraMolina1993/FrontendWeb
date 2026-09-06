@@ -3,7 +3,6 @@ import axios from "axios";
 
 import { getApiErrorMessage } from "../../../shared/lib/api/api-error";
 
-import { CARRERA_EJEMPLO_API, coincideConEjemplo } from "../data/carrera.ejemplo";
 import { carreraApi } from "../services/carrera.api";
 import type { Carrera, CarreraListParams } from "../types/carrera.types";
 
@@ -34,16 +33,7 @@ export function useCarreras(params: CarreraListParams = {}) {
           controller.signal,
         );
 
-        if (data.length > 0) {
-          setCarreras(data);
-          return;
-        }
-
-        setCarreras(
-          coincideConEjemplo(CARRERA_EJEMPLO_API, buscar, modalidad)
-            ? [CARRERA_EJEMPLO_API]
-            : [],
-        );
+        setCarreras(data);
       } catch (err) {
         if (controller.signal.aborted || axios.isCancel(err)) return;
         setError(getApiErrorMessage(err));
