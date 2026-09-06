@@ -23,7 +23,9 @@ export const AppRouter = () => {
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
+        <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/preinscripciones" element={<PreinscripcionesPage />} />
         <Route path="/dashboard/componentes" element={<Dashboard />} />
         <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
         <Route path="/institucional" element={<InstitucionalPage />} />
@@ -37,7 +39,6 @@ export const AppRouter = () => {
         <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
         <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard/preinscripciones" element={<PreinscripcionesPage />} />
           <Route path="/admin/contacto" element={<ContactoAdminPage />} />
         </Route>
       </Routes>

@@ -1,61 +1,29 @@
-import { useMemo, useState } from "react";
-import { CalendarDays, ClipboardCheck } from "lucide-react";
+import { useState } from "react";
+import { ClipboardCheck, Send } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 
-import AdminLayout from "../../../components/layouts/applayout";
-import Card from "../../../components/ui/card";
-import Input from "../../../components/ui/input";
-import Select from "../../../components/ui/select";
-import StatusBadge from "../../../components/ui/statusBadge";
-import Table from "../../../components/ui/table";
+import { useCarreras } from "../../carreras/hooks/useCarreras";
+import { crearPreinscripcion, type PreinscripcionInput } from "../services/preinscripcion.api";
 
-type EstadoPreinscripcion = "activo" | "pendiente" | "rechazado";
-
-type Preinscripcion = {
-  id: number;
-  aspirante: string;
-  email: string;
-  carrera: string;
-  fecha: string;
-  estado: EstadoPreinscripcion;
-};
-
-const PREINSCRIPCIONES_INICIALES: Preinscripcion[] = [
-  { id: 1042, aspirante: "Lucía Ferreyra", email: "lucia.ferreyra@email.com", carrera: "Desarrollo de Software", fecha: "04/09/2026", estado: "pendiente" },
-  { id: 1041, aspirante: "Mateo Rodríguez", email: "mateo.rodriguez@email.com", carrera: "Enfermería", fecha: "03/09/2026", estado: "activo" },
-  { id: 1040, aspirante: "Sofía Acosta", email: "sofia.acosta@email.com", carrera: "Administración", fecha: "02/09/2026", estado: "pendiente" },
-  { id: 1039, aspirante: "Tomás Benítez", email: "tomas.benitez@email.com", carrera: "Desarrollo de Software", fecha: "01/09/2026", estado: "rechazado" },
-];
-
-const estadoOpciones = [
-  { value: "pendiente", label: "Pendientes" },
-  { value: "activo", label: "Aprobadas" },
-  { value: "rechazado", label: "Rechazadas" },
-];
+const initialForm: PreinscripcionInput = { nombre: "", apellido: "", email: "", telefono: "", carreraId: "" };
 
 export default function PreinscripcionesPage() {
-  const [preinscripciones, setPreinscripciones] = useState(PREINSCRIPCIONES_INICIALES);
-  const [busqueda, setBusqueda] = useState("");
-  const [estado, setEstado] = useState("");
+  const [form, setForm] = useState(initialForm);
+  const [sent, setSent] = useState(false);
+  const carreras = useCarreras();
+  const mutation = useMutation({ mutationFn: crearPreinscripcion });
+  const update = (field: keyof PreinscripcionInput, value: string) => setForm((current) => ({ ...current, [field]: value }));
 
-  const filtradas = useMemo(() => {
-    const termino = busqueda.trim().toLowerCase();
-    return preinscripciones.filter((item) => {
-      const coincideBusqueda = !termino || [item.aspirante, item.email, item.carrera].some((campo) => campo.toLowerCase().includes(termino));
-      return coincideBusqueda && (!estado || item.estado === estado);
-    });
-  }, [busqueda, estado, preinscripciones]);
-
-  function cambiarEstado(id: number, siguiente: EstadoPreinscripcion) {
-    setPreinscripciones((actuales) => actuales.map((item) => item.id === id ? { ...item, estado: siguiente } : item));
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      await mutation.mutateAsync(form);
+      setSent(true);
+      setForm(initialForm);
+    } catch {
+      setSent(false);
+    }
   }
 
-  const columnas = [
-    { key: "aspirante", header: "Aspirante", render: (item: Preinscripcion) => <div><p className="font-bold text-zinc-900">{item.aspirante}</p><p className="text-xs text-zinc-500">{item.email}</p></div> },
-    { key: "carrera", header: "Carrera", render: (item: Preinscripcion) => item.carrera },
-    { key: "fecha", header: "Fecha", render: (item: Preinscripcion) => <span className="inline-flex items-center gap-2 whitespace-nowrap text-zinc-500"><CalendarDays size={15} />{item.fecha}</span> },
-    { key: "estado", header: "Estado", render: (item: Preinscripcion) => <StatusBadge status={item.estado} label={item.estado === "activo" ? "Aprobada" : undefined} mostrarPunto={false} /> },
-    { key: "accion", header: "Acción", cellClassName: "text-right", render: (item: Preinscripcion) => item.estado === "pendiente" ? <div className="flex justify-end gap-2"><button type="button" onClick={() => cambiarEstado(item.id, "activo")} className="text-sm font-bold text-emerald-700 hover:underline">Aprobar</button><button type="button" onClick={() => cambiarEstado(item.id, "rechazado")} className="text-sm font-bold text-red-700 hover:underline">Rechazar</button></div> : <span className="text-sm text-zinc-400">Sin acciones</span> },
-  ];
-
-  return <AdminLayout><main className="space-y-7 pb-6"><header><p className="flex items-center gap-2 text-sm font-bold text-[#B78700]"><ClipboardCheck size={17} /> Admisiones</p><h1 className="mt-1 text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">Preinscripciones</h1><p className="mt-2 text-sm text-zinc-500 sm:text-base">Revisá y actualizá las solicitudes de ingreso al instituto.</p></header><Card><div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]"><Input label="Buscar solicitud" value={busqueda} onChange={(event) => setBusqueda(event.target.value)} placeholder="Nombre, correo o carrera" /><Select label="Filtrar por estado" value={estado} onChange={(event) => setEstado(event.target.value)} opciones={estadoOpciones} placeholder="Todos los estados" /></div></Card><Card titulo="Solicitudes recibidas" descripcion={`${filtradas.length} solicitudes encontradas`}><Table columns={columnas} data={filtradas} getRowKey={(item) => item.id} caption="Listado de preinscripciones" emptyMessage="No hay solicitudes que coincidan con los filtros." /></Card></main></AdminLayout>;
+  return <main><section className="bg-[#171717] px-5 py-16 text-white sm:px-8 lg:px-12"><div className="mx-auto max-w-7xl"><p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-[#FFD21A]"><ClipboardCheck size={17} /> Admisiones</p><h1 className="mt-3 max-w-2xl text-4xl font-black sm:text-5xl">Preinscribite en el instituto.</h1><p className="mt-5 max-w-xl text-lg leading-8 text-white/70">Completá tus datos y te contactaremos para acompañarte en el proceso de ingreso.</p></div></section><section className="mx-auto max-w-3xl px-5 py-14 sm:px-8"><div className="border border-slate-200 bg-white p-6 shadow-sm sm:p-8">{sent ? <div className="border border-emerald-200 bg-emerald-50 p-8 text-center"><ClipboardCheck className="mx-auto text-emerald-600" size={42} /><h2 className="mt-4 text-2xl font-black text-emerald-950">Preinscripción recibida</h2><p className="mt-2 text-emerald-800">Gracias por completar tus datos. El instituto se pondrá en contacto con vos.</p><button type="button" onClick={() => { setSent(false); mutation.reset(); }} className="mt-6 border border-emerald-700 px-4 py-2 font-bold text-emerald-800">Enviar otra preinscripción</button></div> : <form onSubmit={submit}><div className="grid gap-5 sm:grid-cols-2"><label className="text-sm font-bold text-[#171717]">Nombre<input required value={form.nombre} onChange={(event) => update("nombre", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label><label className="text-sm font-bold text-[#171717]">Apellido<input required value={form.apellido} onChange={(event) => update("apellido", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label><label className="text-sm font-bold text-[#171717]">Correo electrónico<input required type="email" value={form.email} onChange={(event) => update("email", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label><label className="text-sm font-bold text-[#171717]">Teléfono <span className="font-normal text-slate-500">(opcional)</span><input value={form.telefono} onChange={(event) => update("telefono", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label></div><label className="mt-5 block text-sm font-bold text-[#171717]">Carrera<select required value={form.carreraId} onChange={(event) => update("carreraId", event.target.value)} className="mt-2 w-full border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-[#C49200]"><option value="">Seleccioná una carrera</option>{carreras.carreras.map((carrera) => <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>)}</select></label>{carreras.cargando && <p className="mt-3 text-sm text-slate-500">Cargando carreras...</p>}{carreras.error && <p className="mt-3 text-sm text-amber-700">No pudimos cargar las carreras. Intentá nuevamente más tarde.</p>}{mutation.isError && <p role="alert" className="mt-4 border-l-4 border-red-500 bg-red-50 p-3 text-sm text-red-800">No pudimos enviar la preinscripción. Revisá los datos e intentá nuevamente.</p>}<button type="submit" disabled={mutation.isPending} className="mt-6 inline-flex items-center gap-2 bg-[#171717] px-5 py-3 font-bold text-white hover:bg-[#C49200] disabled:opacity-60">{mutation.isPending ? "Enviando..." : "Enviar preinscripción"}<Send size={17} /></button></form>}</div></section></main>;
 }
