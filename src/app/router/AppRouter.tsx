@@ -33,7 +33,7 @@ export const AppRouter = () => {
         <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
         <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
         {/* Mis rutas de administración */}
-        {/* <AdminRoutes /> */}
+        <AdminRoutes />
       </Routes>
     </BrowserRouter>
   );
