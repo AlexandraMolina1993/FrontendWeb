@@ -7,7 +7,9 @@ import SedesPage from "../../features/sedes/pages/public/SedesPage";
 import SedeDetallePage from "../../features/sedes/pages/public/SedeDetallePage";
 import SedesAdminPage from "../../features/sedes/pages/admin/SedesAdminPage";
 import SedeNuevaPage from "../../features/sedes/pages/admin/SedeNuevaPage";
-import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage"; // IMPORTA MIS RUTAS
+import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/PublicacionesAdminPage";
+import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
+import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage";
 
 export const AppRouter = () => {
   return (
@@ -27,9 +29,10 @@ export const AppRouter = () => {
         <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
         <Route path="/admin/sedes" element={<SedesAdminPage />} />
         <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
-
-        
-        
+  <Route path="/admin/usuarios" element={<UsuariosAdminPage />} />
+        <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
+        <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
+        <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
       </Routes>
     </BrowserRouter>
   );
