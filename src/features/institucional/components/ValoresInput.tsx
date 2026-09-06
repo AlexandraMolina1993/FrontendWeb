@@ -1,0 +1,5 @@
+import { Plus, Trash2 } from "lucide-react";
+import Input from "../../../components/ui/input";
+export default function ValoresInput({ valores, onChange }: { valores: string[]; onChange: (valores: string[]) => void }) {
+  return <div><div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-bold text-[#171717]">Valores institucionales</h3><button type="button" onClick={() => onChange([...valores, ""])} className="inline-flex items-center gap-1 text-sm font-bold text-[#C49200]"><Plus size={16} />Agregar</button></div><div className="space-y-3">{valores.map((valor, index) => <div key={`${index}-${valor}`} className="flex items-start gap-2"><Input aria-label={`Valor ${index + 1}`} value={valor} onChange={(event) => onChange(valores.map((item, itemIndex) => itemIndex === index ? event.target.value : item))} placeholder="Ej. Compromiso" /><button type="button" aria-label="Eliminar valor" onClick={() => onChange(valores.filter((_, itemIndex) => itemIndex !== index))} className="mt-2 grid size-10 shrink-0 place-items-center rounded-xl text-red-600 hover:bg-red-50"><Trash2 size={17} /></button></div>)}</div></div>;
+}

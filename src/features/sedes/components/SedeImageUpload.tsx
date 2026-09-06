@@ -1,0 +1,2 @@
+import Input from "../../../components/ui/input";
+export default function SedeImageUpload({ value, onChange }: { value: string; onChange: (value: string) => void }) { return <Input label="URL de imagen" value={value} onChange={(event) => onChange(event.target.value)} ayuda="Pegá la URL pública de la imagen de la sede." />; }
