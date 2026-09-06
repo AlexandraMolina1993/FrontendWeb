@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import type { ReactNode } from "react";
+import logoDefault from "../../assets/logo.jpg";
 
 import {
   sidebarAdminAccentStyle,
@@ -150,7 +151,7 @@ export default function SidebarAdmin({
   abierto = false,
   cerrar,
   items = sidebarAdminItems,
-  logo,
+  logo = logoDefault,
   nombreInstituto = "Instituto Superior Villa del Rosario",
   nombreCorto = "ISVDR",
   onCerrarSesion,
