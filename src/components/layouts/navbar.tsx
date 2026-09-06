@@ -105,7 +105,7 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "contacto",
     label: "Contacto",
-    to: "/admin/contacto",
+    to: "/contacto",
     icon: <MessageSquare />,
   },
   {
