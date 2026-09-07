@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 
 import AdminLayout from "../../../components/layouts/applayout";
+import ContactoPage from "../../contacto/pages/public/ContactoPage";
+import PreinscripcionesPage from "../../preinscripciones/pages/PreinscripcionesPage";
 import Badge from "../../../components/ui/badge";
 import Button from "../../../components/ui/button";
 import Card from "../../../components/ui/card";
@@ -100,6 +102,22 @@ export default function Dashboard() {
       });
     }
   }, [location.pathname]);
+
+  if (location.pathname === "/dashboard/contacto") {
+    return (
+      <AdminLayout>
+        <ContactoPage />
+      </AdminLayout>
+    );
+  }
+
+  if (location.pathname === "/dashboard/preinscripciones") {
+    return (
+      <AdminLayout>
+        <PreinscripcionesPage />
+      </AdminLayout>
+    );
+  }
 
   const columnasActualizaciones = [
     { key: "contenido", header: "Contenido", render: (item: Actualizacion) => <span className="font-bold text-zinc-900">{item.contenido}</span> },

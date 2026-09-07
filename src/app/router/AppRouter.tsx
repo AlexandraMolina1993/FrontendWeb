@@ -12,7 +12,6 @@ import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/Pub
 import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage";
 import ContactoPage from "../../features/contacto/pages/public/ContactoPage";
-import ContactoAdminPage from "../../features/contacto/pages/admin/ContactoAdminPage";
 import PreinscripcionesPage from "../../features/preinscripciones/pages/PreinscripcionesPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -25,7 +24,8 @@ export const AppRouter = () => {
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/preinscripciones" element={<PreinscripcionesPage />} />
+        <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
+        <Route path="/dashboard/contacto" element={<Dashboard />} />
         <Route path="/dashboard/componentes" element={<Dashboard />} />
         <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
         <Route path="/institucional" element={<InstitucionalPage />} />
@@ -39,7 +39,7 @@ export const AppRouter = () => {
         <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
         <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/admin/contacto" element={<ContactoAdminPage />} />
+          <Route path="/admin/contacto" element={<Navigate to="/dashboard/contacto" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>
