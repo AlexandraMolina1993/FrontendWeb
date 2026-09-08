@@ -97,29 +97,33 @@ export default function ContactoAdminPage() {
 
   if (messagesQuery.isLoading)
     return (
-      <div className="grid min-h-[60vh] place-items-center">
-        <LoadingSpinner text="Cargando bandeja de contacto..." />
-      </div>
+      <AdminLayout>
+        <div className="grid min-h-[60vh] place-items-center">
+          <LoadingSpinner text="Cargando bandeja de contacto..." />
+        </div>
+      </AdminLayout>
     );
   if (messagesQuery.isError) {
     const unauthorized =
       (messagesQuery.error as AxiosError).response?.status === 401;
     return (
-      <main className="mx-auto max-w-7xl px-5 py-12">
-        <ErrorState
-          title={
-            unauthorized
-              ? "Sesión no autorizada"
-              : "No pudimos cargar los contactos"
-          }
-          description={
-            unauthorized
-              ? "Iniciá sesión para consultar las consultas recibidas."
-              : undefined
-          }
-          onRetry={() => void messagesQuery.refetch()}
-        />
-      </main>
+      <AdminLayout>
+        <main className="mx-auto max-w-7xl px-5 py-12">
+          <ErrorState
+            title={
+              unauthorized
+                ? "Sesión no autorizada"
+                : "No pudimos cargar los contactos"
+            }
+            description={
+              unauthorized
+                ? "Iniciá sesión para consultar las consultas recibidas."
+                : undefined
+            }
+            onRetry={() => void messagesQuery.refetch()}
+          />
+        </main>
+      </AdminLayout>
     );
   }
   return (
