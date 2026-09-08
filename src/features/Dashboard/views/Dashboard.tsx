@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -10,32 +10,23 @@ import {
   FileText,
   Image,
   MessageSquareText,
-  MoreHorizontal,
   PackageOpen,
-  Plus,
-  Trash2,
 } from "lucide-react";
 
 import AdminLayout from "../../../components/layouts/applayout";
-import ContactoAdminPage from "../../contacto/pages/admin/ContactoAdminPage";
-import { obtenerPreinscripciones, type Preinscripcion } from "../../preinscripciones/services/preinscripcion.api";
-import Badge from "../../../components/ui/badge";
 import Button from "../../../components/ui/button";
 import Card from "../../../components/ui/card";
-import Checkbox from "../../../components/ui/checkbox";
-import ConfirmDialog from "../../../components/ui/confirmDialog";
-import DropdownMenu from "../../../components/ui/dropdownMenu";
-import EmptyState from "../../../components/ui/emptyState";
 import ErrorState from "../../../components/ui/errorState";
-import Input from "../../../components/ui/input";
 import LoadingSpinner from "../../../components/ui/loadingSpinner";
 import Modal from "../../../components/ui/modal";
-import Pagination from "../../../components/ui/pagination";
-import SearchInput from "../../../components/ui/searchInput";
-import Select from "../../../components/ui/select";
 import StatusBadge from "../../../components/ui/statusBadge";
 import Table from "../../../components/ui/table";
-import Textarea from "../../../components/ui/textarea";
+import ContactoAdminPage from "../../contacto/pages/admin/ContactoAdminPage";
+import {
+  obtenerPreinscripciones,
+  type Preinscripcion,
+} from "../../preinscripciones/services/preinscripcion.api";
+import ComponentLibrary from "./ComponentLibrary";
 
 type Actualizacion = {
   id: number;
@@ -144,41 +135,79 @@ const indicadores = [
   },
 ];
 
-function preinscripcionStatus(status: string | null | undefined): "activo" | "pendiente" | "rechazado" {
+function preinscripcionStatus(
+  status: string | null | undefined,
+): "activo" | "pendiente" | "rechazado" {
   if (status === "activo" || status === "rechazado") return status;
   return "pendiente";
 }
 
+function obtenerNombreCarrera(item: Preinscripcion) {
+  return typeof item.carrera === "string"
+    ? item.carrera
+    : item.carrera?.nombre ?? item.carreraId ?? "-";
+}
+
+function obtenerNombreAspirante(item: Preinscripcion) {
+  return `${item.nombre ?? ""} ${item.apellido ?? ""}`.trim() || "-";
+}
+
 function PreinscripcionesAdminPage() {
-  const query = useQuery({ queryKey: ["preinscripciones"], queryFn: obtenerPreinscripciones });
+  const query = useQuery({
+    queryKey: ["preinscripciones"],
+    queryFn: obtenerPreinscripciones,
+  });
+
   const columns = [
     {
       key: "aspirante",
       header: "Aspirante",
       render: (item: Preinscripcion) => (
         <div>
-          <p className="font-bold text-zinc-900">{item.nombre} {item.apellido}</p>
-          <p className="text-xs text-zinc-500">{item.email}</p>
+          <p className="font-bold text-zinc-900">
+            {obtenerNombreAspirante(item)}
+          </p>
+          <p className="text-xs text-zinc-500">{item.email ?? "-"}</p>
         </div>
       ),
     },
-    { key: "documento", header: "Documento", render: (item: Preinscripcion) => item.documento },
+    {
+      key: "documento",
+      header: "Documento",
+      render: (item: Preinscripcion) => item.documento ?? "-",
+    },
     {
       key: "carrera",
       header: "Carrera",
-      render: (item: Preinscripcion) => typeof item.carrera === "string" ? item.carrera : item.carrera?.nombre ?? item.carreraId,
+      render: (item: Preinscripcion) => obtenerNombreCarrera(item),
     },
     {
       key: "fecha",
       header: "Fecha",
-      render: (item: Preinscripcion) => item.createdAt ? new Date(item.createdAt).toLocaleDateString("es-AR") : "-",
+      render: (item: Preinscripcion) =>
+        item.createdAt
+          ? new Date(item.createdAt).toLocaleDateString("es-AR")
+          : "-",
     },
     {
       key: "estado",
       header: "Estado",
       render: (item: Preinscripcion) => {
         const status = preinscripcionStatus(item.estado);
-        return <StatusBadge status={status} mostrarPunto={false} />;
+
+        return (
+          <StatusBadge
+            status={status}
+            label={
+              status === "activo"
+                ? "Aprobada"
+                : status === "rechazado"
+                  ? "Rechazada"
+                  : "Pendiente"
+            }
+            mostrarPunto={false}
+          />
+        );
       },
     },
   ];
@@ -186,12 +215,28 @@ function PreinscripcionesAdminPage() {
   return (
     <main className="mx-auto max-w-7xl space-y-7 px-5 py-8 sm:px-8 lg:px-12">
       <header>
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#B78700]">Administración</p>
-        <h1 className="mt-2 text-3xl font-black text-zinc-950">Preinscripciones</h1>
-        <p className="mt-2 text-zinc-500">Solicitudes recibidas desde el formulario de preinscripción.</p>
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#B78700]">
+          Administración
+        </p>
+        <h1 className="mt-2 text-3xl font-black text-zinc-950">
+          Preinscripciones
+        </h1>
+        <p className="mt-2 text-zinc-500">
+          Solicitudes recibidas desde el formulario de preinscripción.
+        </p>
       </header>
-      {query.isLoading && <LoadingSpinner text="Cargando preinscripciones..." />}
-      {query.isError && <ErrorState onRetry={() => void query.refetch()} title="No pudimos cargar las preinscripciones" />}
+
+      {query.isLoading && (
+        <LoadingSpinner text="Cargando preinscripciones..." />
+      )}
+
+      {query.isError && (
+        <ErrorState
+          onRetry={() => void query.refetch()}
+          title="No pudimos cargar las preinscripciones"
+        />
+      )}
+
       {!query.isLoading && !query.isError && (
         <Table
           columns={columns}
@@ -206,36 +251,17 @@ function PreinscripcionesAdminPage() {
 }
 
 export default function Dashboard() {
-  const location = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [confirmacionAbierta, setConfirmacionAbierta] = useState(false);
-  const [busquedaDemo, setBusquedaDemo] = useState("componentes");
-  const [paginaDemo, setPaginaDemo] = useState(3);
+  const [solicitud, setSolicitud] = useState<Preinscripcion | null>(null);
+
   const preinscripcionesQuery = useQuery({
     queryKey: ["preinscripciones"],
     queryFn: obtenerPreinscripciones,
-    enabled: location.pathname === "/dashboard",
+    enabled: pathname === "/dashboard",
   });
 
-  useEffect(() => {
-    if (location.pathname.endsWith("/preinscripciones")) {
-      requestAnimationFrame(() => {
-        document
-          .getElementById("preinscripciones")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    }
-    if (location.pathname.endsWith("/componentes")) {
-      requestAnimationFrame(() => {
-        document
-          .getElementById("componentes")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    }
-  }, [location.pathname]);
-
-  if (location.pathname === "/dashboard/contacto") {
+  if (pathname === "/dashboard/contacto") {
     return (
       <AdminLayout>
         <ContactoAdminPage />
@@ -243,10 +269,18 @@ export default function Dashboard() {
     );
   }
 
-  if (location.pathname === "/dashboard/preinscripciones") {
+  if (pathname === "/dashboard/preinscripciones") {
     return (
       <AdminLayout>
         <PreinscripcionesAdminPage />
+      </AdminLayout>
+    );
+  }
+
+  if (pathname === "/dashboard/componentes") {
+    return (
+      <AdminLayout>
+        <ComponentLibrary />
       </AdminLayout>
     );
   }
@@ -295,62 +329,71 @@ export default function Dashboard() {
       header: "Aspirante",
       render: (item: Preinscripcion) => (
         <div>
-          <p className="font-bold text-zinc-900">{item.nombre} {item.apellido}</p>
-          <p className="mt-0.5 text-xs text-zinc-400">Solicitud #{item.id}</p>
+          <p className="font-bold text-zinc-900">
+            {obtenerNombreAspirante(item)}
+          </p>
+          <p className="mt-0.5 text-xs text-zinc-400">
+            Solicitud #{item.id}
+          </p>
         </div>
       ),
     },
     {
       key: "carrera",
       header: "Carrera",
-      render: (item: Preinscripcion) => typeof item.carrera === "string" ? item.carrera : item.carrera?.nombre ?? item.carreraId,
+      render: (item: Preinscripcion) => obtenerNombreCarrera(item),
     },
     {
       key: "fecha",
       header: "Fecha",
       render: (item: Preinscripcion) => (
         <span className="inline-flex items-center gap-2 whitespace-nowrap text-zinc-500">
-          <CalendarDays size={15} />
-          {item.createdAt ? new Date(item.createdAt).toLocaleDateString("es-AR") : "-"}
+          <CalendarDays size={15} aria-hidden="true" />
+          {item.createdAt
+            ? new Date(item.createdAt).toLocaleDateString("es-AR")
+            : "-"}
         </span>
       ),
     },
     {
       key: "estado",
       header: "Estado",
-      render: (item: Preinscripcion) => (
-        <StatusBadge
-          status={item.estado ?? "pendiente"}
-          label={item.estado === "activo" ? "Aprobada" : undefined}
-          mostrarPunto={false}
-        />
-      ),
+      render: (item: Preinscripcion) => {
+        const status = preinscripcionStatus(item.estado);
+
+        return (
+          <StatusBadge
+            status={status}
+            label={
+              status === "activo"
+                ? "Aprobada"
+                : status === "rechazado"
+                  ? "Rechazada"
+                  : "Pendiente"
+            }
+            mostrarPunto={false}
+          />
+        );
+      },
     },
     {
       key: "acciones",
-      header: <span className="sr-only">Acciones</span>,
-      cellClassName: "text-right",
+      header: "Detalle",
       render: (item: Preinscripcion) => (
-        <DropdownMenu
-          ariaLabel={`Acciones para ${item.nombre} ${item.apellido}`}
-          trigger={<MoreHorizontal size={20} />}
-          items={[
-            { id: "ver", label: "Ver solicitud", onClick: () => undefined },
-            {
-              id: "aprobar",
-              label: "Marcar como aprobada",
-              disabled: item.estado === "activo",
-              onClick: () => undefined,
-            },
-          ]}
-        />
+        <Button
+          variant="secondary"
+          aria-label={`Ver solicitud de ${obtenerNombreAspirante(item)}`}
+          onClick={() => setSolicitud(item)}
+        >
+          Ver solicitud
+        </Button>
       ),
     },
   ];
 
   return (
     <AdminLayout>
-      <div className="space-y-7 pb-6">
+      <div className="space-y-6 pb-6">
         <header className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-bold text-[#B78700]">
@@ -360,9 +403,11 @@ export default function Dashboard() {
               Vista general
             </h1>
             <p className="mt-2 text-sm text-zinc-500 sm:text-base">
-              Resumen del contenido institucional y biblioteca de componentes.
+              Resumen del contenido institucional y acceso a los módulos del
+              instituto.
             </p>
           </div>
+
           <Button
             variant="secondary"
             onClick={() => navigate("/dashboard/componentes")}
@@ -390,12 +435,18 @@ export default function Dashboard() {
                         {valor}
                       </p>
                     </div>
+
                     <span
-                      className={`grid size-12 shrink-0 place-items-center rounded-2xl ${destacada ? "bg-[#171717] text-white" : "bg-zinc-100 text-zinc-600"}`}
+                      className={`grid size-12 shrink-0 place-items-center rounded-2xl ${
+                        destacada
+                          ? "bg-[#171717] text-white"
+                          : "bg-zinc-100 text-zinc-600"
+                      }`}
                     >
                       <Icono size={22} />
                     </span>
                   </div>
+
                   <p className="text-xs text-zinc-600">{detalle}</p>
                 </div>
               </Card>
@@ -408,7 +459,10 @@ export default function Dashboard() {
             titulo="Últimas actualizaciones"
             descripcion="Cambios recientes en la información del sitio."
             pie={
-              <button className="text-sm font-bold text-[#8A6700] hover:underline">
+              <button
+                type="button"
+                className="text-sm font-bold text-[#8A6700] hover:underline"
+              >
                 Ver toda la actividad
               </button>
             }
@@ -436,6 +490,7 @@ export default function Dashboard() {
                   <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#FFF0AE] text-[#9A7400]">
                     <Check size={18} />
                   </span>
+
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-bold text-zinc-900">
                       {tarea.titulo}
@@ -444,6 +499,7 @@ export default function Dashboard() {
                       {tarea.seccion}
                     </span>
                   </span>
+
                   <span className="whitespace-nowrap text-xs font-semibold text-zinc-400">
                     {tarea.fecha}
                   </span>
@@ -453,11 +509,7 @@ export default function Dashboard() {
           </Card>
         </section>
 
-        <section
-          id="preinscripciones"
-          className="scroll-mt-24"
-          aria-labelledby="preinscripciones-title"
-        >
+        <section aria-labelledby="preinscripciones-title">
           <Card
             titulo="Preinscripciones recientes"
             descripcion="Solicitudes de ingreso que requieren seguimiento."
@@ -466,6 +518,7 @@ export default function Dashboard() {
                 <span className="text-xs text-zinc-500">
                   Mostrando las últimas 4 solicitudes
                 </span>
+
                 <Button
                   variant="secondary"
                   onClick={() => navigate("/dashboard/preinscripciones")}
@@ -475,13 +528,28 @@ export default function Dashboard() {
               </div>
             }
           >
-            <Table
-              columns={columnasPreinscripciones}
-              data={(preinscripcionesQuery.data ?? []).slice(0, 4)}
-              getRowKey={(item) => item.id}
-              caption="Preinscripciones recientes"
-              className="border-0 shadow-none"
-            />
+            {preinscripcionesQuery.isLoading && (
+              <LoadingSpinner text="Cargando preinscripciones..." />
+            )}
+
+            {preinscripcionesQuery.isError && (
+              <ErrorState
+                title="No pudimos cargar las preinscripciones"
+                onRetry={() => void preinscripcionesQuery.refetch()}
+              />
+            )}
+
+            {!preinscripcionesQuery.isLoading &&
+              !preinscripcionesQuery.isError && (
+                <Table
+                  columns={columnasPreinscripciones}
+                  data={(preinscripcionesQuery.data ?? []).slice(0, 4)}
+                  getRowKey={(item) => item.id}
+                  caption="Preinscripciones recientes"
+                  className="border-0 shadow-none"
+                  emptyMessage="No hay preinscripciones para mostrar."
+                />
+              )}
           </Card>
         </section>
 
@@ -493,10 +561,13 @@ export default function Dashboard() {
               </span>
               <div>
                 <p className="text-2xl font-black text-zinc-950">7</p>
-                <p className="text-sm text-zinc-500">Consultas sin responder</p>
+                <p className="text-sm text-zinc-500">
+                  Consultas sin responder
+                </p>
               </div>
             </div>
           </Card>
+
           <Card interactiva>
             <div className="flex items-center gap-4">
               <span className="grid size-11 place-items-center rounded-xl bg-zinc-100 text-zinc-600">
@@ -504,10 +575,13 @@ export default function Dashboard() {
               </span>
               <div>
                 <p className="text-2xl font-black text-zinc-950">12</p>
-                <p className="text-sm text-zinc-500">Solicitudes por revisar</p>
+                <p className="text-sm text-zinc-500">
+                  Solicitudes por revisar
+                </p>
               </div>
             </div>
           </Card>
+
           <Card interactiva className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-4">
               <span className="grid size-11 place-items-center rounded-xl bg-zinc-100 text-zinc-600">
@@ -520,293 +594,52 @@ export default function Dashboard() {
             </div>
           </Card>
         </section>
-
-        <section
-          id="componentes"
-          className="scroll-mt-24 space-y-5 pt-4"
-          aria-labelledby="componentes-title"
-        >
-          <div className="border-t border-zinc-200 pt-8">
-            <p className="text-sm font-bold text-[#B78700]">
-              Sistema de diseño
-            </p>
-            <h2
-              id="componentes-title"
-              className="mt-1 text-2xl font-black text-zinc-950 sm:text-3xl"
-            >
-              Biblioteca de componentes
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-              Ejemplos interactivos de todos los componentes reutilizables
-              disponibles para construir nuevas pantallas.
-            </p>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            <Card
-              titulo="Botones"
-              descripcion="Acciones principales, secundarias y estados especiales."
-            >
-              <div className="flex flex-wrap gap-3">
-                <Button>
-                  <Plus /> Primario
-                </Button>
-                <Button variant="secondary">Secundario</Button>
-                <Button variant="correct">
-                  <Check /> Correcto
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => setConfirmacionAbierta(true)}
-                >
-                  <Trash2 /> Peligro
-                </Button>
-                <Button disabled>Deshabilitado</Button>
-              </div>
-            </Card>
-
-            <Card
-              titulo="Badges y estados"
-              descripcion="Etiquetas informativas y estados de registros."
-            >
-              <div className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {(
-                    [
-                      "primary",
-                      "secondary",
-                      "dark",
-                      "success",
-                      "warning",
-                      "danger",
-                      "info",
-                    ] as const
-                  ).map((variant) => (
-                    <Badge key={variant} variant={variant} mostrarPunto>
-                      {variant}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {(
-                    [
-                      "activo",
-                      "inactivo",
-                      "pendiente",
-                      "borrador",
-                      "publicado",
-                      "rechazado",
-                    ] as const
-                  ).map((status) => (
-                    <StatusBadge key={status} status={status} />
-                  ))}
-                </div>
-              </div>
-            </Card>
-
-            <Card
-              titulo="Campos de texto"
-              descripcion="Variantes normal, ayuda, error y deshabilitado."
-            >
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Input
-                  label="Nombre completo"
-                  placeholder="Ej. Ana Martínez"
-                  required
-                  ayuda="Ingresá nombre y apellido."
-                />
-                <Input
-                  label="Correo electrónico"
-                  value="correo-invalido"
-                  readOnly
-                  error="El correo no es válido."
-                />
-                <Select
-                  label="Rol"
-                  opciones={[
-                    { value: "admin", label: "Administrador" },
-                    { value: "editor", label: "Editor" },
-                    { value: "docente", label: "Docente" },
-                  ]}
-                  defaultValue="editor"
-                />
-                <Input label="Legajo" value="ISVDR-1042" readOnly disabled />
-                <div className="sm:col-span-2">
-                  <Textarea
-                    label="Observaciones"
-                    placeholder="Escribí una observación..."
-                    rows={4}
-                    ayuda="Máximo 500 caracteres."
-                  />
-                </div>
-              </div>
-            </Card>
-
-            <Card
-              titulo="Búsqueda y selección"
-              descripcion="Controles para filtrar y elegir opciones."
-            >
-              <div className="space-y-5">
-                <SearchInput
-                  value={busquedaDemo}
-                  onChange={(event) => setBusquedaDemo(event.target.value)}
-                  onClear={() => setBusquedaDemo("")}
-                  placeholder="Buscar componentes..."
-                />
-                <Checkbox
-                  label="Mostrar elementos inactivos"
-                  descripcion="Incluye registros archivados en los resultados."
-                  defaultChecked
-                />
-                <Checkbox
-                  label="Confirmar condiciones"
-                  error="Este campo es obligatorio."
-                />
-              </div>
-            </Card>
-
-            <Card
-              titulo="Carga y paginación"
-              descripcion="Feedback durante procesos y navegación entre páginas."
-            >
-              <div className="space-y-8">
-                <div className="flex flex-wrap items-center gap-8">
-                  <LoadingSpinner size="pequeno" />
-                  <LoadingSpinner size="mediano" text="Cargando datos..." />
-                  <LoadingSpinner size="grande" />
-                </div>
-                <Pagination
-                  currentPage={paginaDemo}
-                  totalPages={8}
-                  totalItems={76}
-                  pageSize={10}
-                  onPageChange={setPaginaDemo}
-                />
-              </div>
-            </Card>
-
-            <Card
-              titulo="Menú y ventanas"
-              descripcion="Acciones contextuales, modal y confirmación."
-            >
-              <div className="flex flex-wrap items-center gap-3">
-                <Button onClick={() => setModalAbierto(true)}>
-                  Abrir modal
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => setConfirmacionAbierta(true)}
-                >
-                  Abrir confirmación
-                </Button>
-                <DropdownMenu
-                  trigger={<MoreHorizontal size={20} />}
-                  items={[
-                    {
-                      id: "ver-demo",
-                      label: "Ver detalle",
-                      onClick: () => setModalAbierto(true),
-                    },
-                    {
-                      id: "editar-demo",
-                      label: "Editar",
-                      onClick: () => setModalAbierto(true),
-                    },
-                    {
-                      id: "eliminar-demo",
-                      label: "Eliminar",
-                      danger: true,
-                      separatorBefore: true,
-                      onClick: () => setConfirmacionAbierta(true),
-                    },
-                  ]}
-                />
-              </div>
-            </Card>
-          </div>
-
-          <div className="grid gap-5 xl:grid-cols-3">
-            <Card>
-              <EmptyState
-                title="No hay registros"
-                description="Creá el primer registro para verlo en esta sección."
-                action={
-                  <Button onClick={() => setModalAbierto(true)}>
-                    <Plus /> Crear registro
-                  </Button>
-                }
-              />
-            </Card>
-            <Card>
-              <ErrorState
-                title="No pudimos cargar los datos"
-                description="Revisá tu conexión e intentá nuevamente."
-                onRetry={() => undefined}
-              />
-            </Card>
-            <Card
-              titulo="Card reutilizable"
-              descripcion="Admite título, descripción, contenido y pie."
-              destacada
-              interactiva
-              pie={
-                <span className="text-sm text-zinc-500">
-                  Contenido del pie de la tarjeta
-                </span>
-              }
-            >
-              <p className="text-sm leading-6 text-zinc-600">
-                Este componente sirve como contenedor para indicadores,
-                formularios, tablas y estados.
-              </p>
-            </Card>
-          </div>
-        </section>
       </div>
 
       <Modal
-        abierto={modalAbierto}
-        cerrar={() => setModalAbierto(false)}
-        titulo="Modal de ejemplo"
-        descripcion="Componente reutilizable con contenido y acciones."
-        icono={<PackageOpen size={20} />}
+        abierto={solicitud !== null}
+        cerrar={() => setSolicitud(null)}
+        titulo={
+          solicitud ? `Solicitud #${solicitud.id}` : "Detalle de solicitud"
+        }
+        descripcion="Información de la preinscripción"
+        tamano="pequeno"
         pie={
-          <div className="flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setModalAbierto(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={() => setModalAbierto(false)}>Guardar</Button>
-          </div>
+          <Button variant="secondary" onClick={() => setSolicitud(null)}>
+            Cerrar detalle
+          </Button>
         }
       >
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Input label="Título" placeholder="Ingresá un título" required />
-          <Select
-            label="Estado"
-            opciones={[
-              { value: "draft", label: "Borrador" },
-              { value: "published", label: "Publicado" },
-            ]}
-          />
-          <div className="sm:col-span-2">
-            <Textarea
-              label="Descripción"
-              rows={4}
-              placeholder="Escribí una descripción..."
-            />
-          </div>
-        </div>
+        {solicitud && (
+          <dl className="grid gap-5 text-sm">
+            {[
+              ["Aspirante", obtenerNombreAspirante(solicitud)],
+              ["Documento", solicitud.documento ?? "-"],
+              ["Email", solicitud.email ?? "-"],
+              ["Carrera", obtenerNombreCarrera(solicitud)],
+              [
+                "Fecha de inscripción",
+                solicitud.createdAt
+                  ? new Date(solicitud.createdAt).toLocaleDateString("es-AR")
+                  : "-",
+              ],
+              [
+                "Estado",
+                preinscripcionStatus(solicitud.estado) === "activo"
+                  ? "Aprobada"
+                  : preinscripcionStatus(solicitud.estado) === "rechazado"
+                    ? "Rechazada"
+                    : "Pendiente",
+              ],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <dt className="text-zinc-500">{label}</dt>
+                <dd className="mt-1 font-bold text-zinc-900">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </Modal>
-
-      <ConfirmDialog
-        abierto={confirmacionAbierta}
-        cancelar={() => setConfirmacionAbierta(false)}
-        confirmar={() => setConfirmacionAbierta(false)}
-        titulo="¿Confirmar esta acción?"
-        descripcion="Este diálogo permite confirmar acciones sensibles antes de ejecutarlas."
-        textoConfirmar="Sí, confirmar"
-        peligro
-      />
     </AdminLayout>
   );
 }
