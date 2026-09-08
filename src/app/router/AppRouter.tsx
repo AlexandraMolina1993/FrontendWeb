@@ -15,7 +15,6 @@ import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPag
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage";
 import ContactoPage from "../../features/contacto/pages/public/ContactoPage";
 import PreinscripcionesPage from "../../features/preinscripciones/pages/PreinscripcionesPage";
-import { ProtectedRoute } from "./ProtectedRoute";
 
 export const AppRouter = () => {
   return (
@@ -24,12 +23,10 @@ export const AppRouter = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
-          <Route path="/dashboard/contacto" element={<Dashboard />} />
-          <Route path="/dashboard/componentes" element={<Dashboard />} />
-        </Route>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
+        <Route path="/dashboard/contacto" element={<Dashboard />} />
+        <Route path="/dashboard/componentes" element={<Dashboard />} />
         <Route path="/carreras" element={<CarrerasPage />} />
         <Route path="/carreras/:id" element={<CarreraDetallePage />} />
         <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
@@ -46,12 +43,10 @@ export const AppRouter = () => {
         <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
         <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
         <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
-        <Route element={<ProtectedRoute />}>
-          <Route
-            path="/admin/contacto"
-            element={<Navigate to="/dashboard/contacto" replace />}
-          />
-        </Route>
+        <Route
+          path="/admin/contacto"
+          element={<Navigate to="/dashboard/contacto" replace />}
+        />
       </Routes>
     </BrowserRouter>
   );
