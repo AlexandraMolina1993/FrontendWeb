@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -17,7 +18,7 @@ import {
 
 import AdminLayout from "../../../components/layouts/applayout";
 import ContactoAdminPage from "../../contacto/pages/admin/ContactoAdminPage";
-import PreinscripcionesPage from "../../preinscripciones/pages/PreinscripcionesPage";
+import { obtenerPreinscripciones, type Preinscripcion } from "../../preinscripciones/services/preinscripcion.api";
 import Badge from "../../../components/ui/badge";
 import Button from "../../../components/ui/button";
 import Card from "../../../components/ui/card";
@@ -43,14 +44,6 @@ type Actualizacion = {
   responsable: string;
   estado: "publicado" | "borrador" | "pendiente";
   fecha: string;
-};
-
-type Preinscripcion = {
-  id: number;
-  aspirante: string;
-  carrera: string;
-  fecha: string;
-  estado: "activo" | "pendiente" | "rechazado";
 };
 
 const actualizaciones: Actualizacion[] = [
@@ -93,37 +86,6 @@ const actualizaciones: Actualizacion[] = [
     responsable: "Coordinación",
     estado: "borrador",
     fecha: "28 ago, 10:22",
-  },
-];
-
-const preinscripciones: Preinscripcion[] = [
-  {
-    id: 1042,
-    aspirante: "Lucía Ferreyra",
-    carrera: "Desarrollo de Software",
-    fecha: "04/09/2026",
-    estado: "pendiente",
-  },
-  {
-    id: 1041,
-    aspirante: "Mateo Rodríguez",
-    carrera: "Enfermería",
-    fecha: "03/09/2026",
-    estado: "activo",
-  },
-  {
-    id: 1040,
-    aspirante: "Sofía Acosta",
-    carrera: "Administración",
-    fecha: "02/09/2026",
-    estado: "pendiente",
-  },
-  {
-    id: 1039,
-    aspirante: "Tomás Benítez",
-    carrera: "Desarrollo de Software",
-    fecha: "01/09/2026",
-    estado: "rechazado",
   },
 ];
 
@@ -182,6 +144,67 @@ const indicadores = [
   },
 ];
 
+function preinscripcionStatus(status: string | null | undefined): "activo" | "pendiente" | "rechazado" {
+  if (status === "activo" || status === "rechazado") return status;
+  return "pendiente";
+}
+
+function PreinscripcionesAdminPage() {
+  const query = useQuery({ queryKey: ["preinscripciones"], queryFn: obtenerPreinscripciones });
+  const columns = [
+    {
+      key: "aspirante",
+      header: "Aspirante",
+      render: (item: Preinscripcion) => (
+        <div>
+          <p className="font-bold text-zinc-900">{item.nombre} {item.apellido}</p>
+          <p className="text-xs text-zinc-500">{item.email}</p>
+        </div>
+      ),
+    },
+    { key: "documento", header: "Documento", render: (item: Preinscripcion) => item.documento },
+    {
+      key: "carrera",
+      header: "Carrera",
+      render: (item: Preinscripcion) => typeof item.carrera === "string" ? item.carrera : item.carrera?.nombre ?? item.carreraId,
+    },
+    {
+      key: "fecha",
+      header: "Fecha",
+      render: (item: Preinscripcion) => item.createdAt ? new Date(item.createdAt).toLocaleDateString("es-AR") : "-",
+    },
+    {
+      key: "estado",
+      header: "Estado",
+      render: (item: Preinscripcion) => {
+        const status = preinscripcionStatus(item.estado);
+        return <StatusBadge status={status} mostrarPunto={false} />;
+      },
+    },
+  ];
+
+  return (
+    <main className="mx-auto max-w-7xl space-y-7 px-5 py-8 sm:px-8 lg:px-12">
+      <header>
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#B78700]">Administración</p>
+        <h1 className="mt-2 text-3xl font-black text-zinc-950">Preinscripciones</h1>
+        <p className="mt-2 text-zinc-500">Solicitudes recibidas desde el formulario de preinscripción.</p>
+      </header>
+      {query.isLoading && <LoadingSpinner text="Cargando preinscripciones..." />}
+      {query.isError && <ErrorState onRetry={() => void query.refetch()} title="No pudimos cargar las preinscripciones" />}
+      {!query.isLoading && !query.isError && (
+        <Table
+          columns={columns}
+          data={query.data ?? []}
+          getRowKey={(item) => item.id}
+          caption="Preinscripciones recibidas"
+          emptyMessage="No hay preinscripciones para mostrar."
+        />
+      )}
+    </main>
+  );
+}
+
 export default function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -189,6 +212,11 @@ export default function Dashboard() {
   const [confirmacionAbierta, setConfirmacionAbierta] = useState(false);
   const [busquedaDemo, setBusquedaDemo] = useState("componentes");
   const [paginaDemo, setPaginaDemo] = useState(3);
+  const preinscripcionesQuery = useQuery({
+    queryKey: ["preinscripciones"],
+    queryFn: obtenerPreinscripciones,
+    enabled: location.pathname === "/dashboard",
+  });
 
   useEffect(() => {
     if (location.pathname.endsWith("/preinscripciones")) {
@@ -218,7 +246,7 @@ export default function Dashboard() {
   if (location.pathname === "/dashboard/preinscripciones") {
     return (
       <AdminLayout>
-        <PreinscripcionesPage />
+        <PreinscripcionesAdminPage />
       </AdminLayout>
     );
   }
@@ -267,7 +295,7 @@ export default function Dashboard() {
       header: "Aspirante",
       render: (item: Preinscripcion) => (
         <div>
-          <p className="font-bold text-zinc-900">{item.aspirante}</p>
+          <p className="font-bold text-zinc-900">{item.nombre} {item.apellido}</p>
           <p className="mt-0.5 text-xs text-zinc-400">Solicitud #{item.id}</p>
         </div>
       ),
@@ -275,7 +303,7 @@ export default function Dashboard() {
     {
       key: "carrera",
       header: "Carrera",
-      render: (item: Preinscripcion) => item.carrera,
+      render: (item: Preinscripcion) => typeof item.carrera === "string" ? item.carrera : item.carrera?.nombre ?? item.carreraId,
     },
     {
       key: "fecha",
@@ -283,7 +311,7 @@ export default function Dashboard() {
       render: (item: Preinscripcion) => (
         <span className="inline-flex items-center gap-2 whitespace-nowrap text-zinc-500">
           <CalendarDays size={15} />
-          {item.fecha}
+          {item.createdAt ? new Date(item.createdAt).toLocaleDateString("es-AR") : "-"}
         </span>
       ),
     },
@@ -292,7 +320,7 @@ export default function Dashboard() {
       header: "Estado",
       render: (item: Preinscripcion) => (
         <StatusBadge
-          status={item.estado}
+          status={item.estado ?? "pendiente"}
           label={item.estado === "activo" ? "Aprobada" : undefined}
           mostrarPunto={false}
         />
@@ -304,7 +332,7 @@ export default function Dashboard() {
       cellClassName: "text-right",
       render: (item: Preinscripcion) => (
         <DropdownMenu
-          ariaLabel={`Acciones para ${item.aspirante}`}
+          ariaLabel={`Acciones para ${item.nombre} ${item.apellido}`}
           trigger={<MoreHorizontal size={20} />}
           items={[
             { id: "ver", label: "Ver solicitud", onClick: () => undefined },
@@ -449,7 +477,7 @@ export default function Dashboard() {
           >
             <Table
               columns={columnasPreinscripciones}
-              data={preinscripciones}
+              data={(preinscripcionesQuery.data ?? []).slice(0, 4)}
               getRowKey={(item) => item.id}
               caption="Preinscripciones recientes"
               className="border-0 shadow-none"

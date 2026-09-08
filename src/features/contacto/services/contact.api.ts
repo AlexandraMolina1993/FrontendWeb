@@ -8,6 +8,11 @@ export async function enviarMensaje(input: ContactMessageInput) {
   return data;
 }
 
+export async function actualizarMensaje(id: string, input: ContactMessageInput) {
+  const { data } = await apiClient.put<ContactMessage>(`/contacto/${id}`, input);
+  return data;
+}
+
 export async function obtenerMensajes() {
   const { data } = await apiClient.get<ContactMessage[]>("/contacto");
   return data;

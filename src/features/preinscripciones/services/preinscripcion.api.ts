@@ -16,9 +16,10 @@ export interface PreinscripcionInput {
 
 export interface Preinscripcion extends PreinscripcionInput {
   id: string | number;
-  estado?: string;
+  estado?: string | null;
   createdAt?: string;
-  carrera?: { id?: string | number; nombre?: string } | string;
+  updatedAt?: string;
+  carrera?: { id?: string | number; nombre?: string } | string | null;
 }
 
 export async function crearPreinscripcion(input: PreinscripcionInput) {

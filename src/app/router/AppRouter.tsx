@@ -24,10 +24,12 @@ export const AppRouter = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
-        <Route path="/dashboard/contacto" element={<Dashboard />} />
-        <Route path="/dashboard/componentes" element={<Dashboard />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
+          <Route path="/dashboard/contacto" element={<Dashboard />} />
+          <Route path="/dashboard/componentes" element={<Dashboard />} />
+        </Route>
         <Route path="/carreras" element={<CarrerasPage />} />
         <Route path="/carreras/:id" element={<CarreraDetallePage />} />
         <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
