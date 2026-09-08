@@ -24,6 +24,10 @@ export const AppRouter = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
+        <Route path="/dashboard/contacto" element={<Dashboard />} />
+        <Route path="/dashboard/componentes" element={<Dashboard />} />
         <Route path="/carreras" element={<CarrerasPage />} />
         <Route path="/carreras/:id" element={<CarreraDetallePage />} />
         <Route path="/institucional" element={<InstitucionalPage />} />
@@ -31,10 +35,6 @@ export const AppRouter = () => {
         <Route path="/sedes/:slug" element={<SedeDetallePage />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
-          <Route path="/dashboard/contacto" element={<Dashboard />} />
-          <Route path="/dashboard/componentes" element={<Dashboard />} />
           <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
           <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
           <Route path="/admin/sedes" element={<SedesAdminPage />} />
