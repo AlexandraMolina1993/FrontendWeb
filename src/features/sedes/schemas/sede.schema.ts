@@ -37,6 +37,6 @@ export function validarSede(values: SedeFormValues) {
   if (!values.nombre.trim()) errores.nombre = "El nombre es obligatorio.";
   if (!values.direccion.trim()) errores.direccion = "La dirección es obligatoria.";
   if (!values.ciudad.trim()) errores.ciudad = "La ciudad es obligatoria.";
-  if (values.email && !/^\S+@\S+\.\S+$/.test(values.email)) errores.email = "Ingresá un correo válido.";
+  if (!values.email.trim() || !/^\S+@\S+\.\S+$/.test(values.email.trim())) errores.email = "Ingresá un correo válido.";
   return errores;
 }

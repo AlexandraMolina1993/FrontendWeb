@@ -9,5 +9,5 @@ export function sedeAFormulario(sede?: Partial<Sede> | null): SedeFormValues {
 }
 
 export function formularioASede(values: SedeFormValues, id = ""): Sede {
-  return { id, nombre: values.nombre.trim(), direccion: values.direccion.trim(), ciudad: values.ciudad.trim(), provincia: values.provincia.trim(), telefono: values.telefono.trim() || null, email: values.email.trim() || null };
+  return { id, nombre: values.nombre.trim(), direccion: values.direccion.trim(), ciudad: values.ciudad.trim(), provincia: values.provincia.trim(), telefono: values.telefono.trim(), email: values.email.trim() };
 }

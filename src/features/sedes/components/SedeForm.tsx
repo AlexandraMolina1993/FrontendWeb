@@ -12,7 +12,7 @@ export default function SedeForm({ values, onChange, onSubmit, guardando }: { va
         <Input label="Ciudad" required value={values.ciudad} onChange={(event) => cambiar("ciudad", event.target.value)} />
         <Input label="Provincia" value={values.provincia} onChange={(event) => cambiar("provincia", event.target.value)} />
         <Input label="Teléfono" value={values.telefono} onChange={(event) => cambiar("telefono", event.target.value)} />
-        <Input label="Correo electrónico" type="email" value={values.email} onChange={(event) => cambiar("email", event.target.value)} />
+        <Input label="Correo electrónico" type="email" required value={values.email} onChange={(event) => cambiar("email", event.target.value)} />
       </div>
       <Button type="submit" disabled={guardando} className="w-full">{guardando ? "Guardando..." : "Guardar sede"}</Button>
     </form>
