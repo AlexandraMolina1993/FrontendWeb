@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import type { ReactNode } from "react";
+import logoDefault from "../../assets/logo.jpg";
 
 import {
   sidebarAdminAccentStyle,
@@ -118,15 +119,6 @@ export const sidebarAdminItems: SidebarItem[] = [
     ],
   },
   {
-    id: "usuarios",
-    label: "Usuarios",
-    icon: <Users />,
-    subitems: [
-      { label: "Nuevo usuario", to: "/admin/usuarios/nuevo" },
-      { label: "Ver usuarios", to: "/admin/usuarios" },
-    ],
-  },
-  {
     id: "componentes",
     label: "Componentes UI",
     section: "Herramientas",
@@ -150,11 +142,11 @@ export default function SidebarAdmin({
   abierto = false,
   cerrar,
   items = sidebarAdminItems,
-  logo,
+  logo = logoDefault,
   nombreInstituto = "Instituto Superior Villa del Rosario",
   nombreCorto = "ISVDR",
   onCerrarSesion,
-  rutaLogin = "/admin/login",
+  rutaLogin = "/",
 }: SidebarAdminProps) {
   const navigate = useNavigate();
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
@@ -196,7 +188,7 @@ export default function SidebarAdmin({
           <button
             type="button"
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/");
               cerrar?.();
             }}
             className={sidebarAdminBrandButtonStyle}

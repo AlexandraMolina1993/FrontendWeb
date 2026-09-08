@@ -4,17 +4,16 @@ import axios from "axios";
 import { getApiErrorMessage } from "../../../shared/lib/api/api-error";
 
 import { carreraApi } from "../services/carrera.api";
-import type { Carrera } from "../types/carrera.types";
+import type { SedeOpcion } from "../types/carrera.types";
 
-export function useCarrera(id: string | null) {
-  const [carrera, setCarrera] = useState<Carrera | null>(null);
-  const [cargando, setCargando] = useState(false);
+export function useSedesOpciones(habilitado = true) {
+  const [sedes, setSedes] = useState<SedeOpcion[]>([]);
+  const [cargando, setCargando] = useState(habilitado);
   const [error, setError] = useState<string | null>(null);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    if (!id) {
-      setCarrera(null);
-      setError(null);
+    if (!habilitado) {
       setCargando(false);
       return;
     }
@@ -22,18 +21,16 @@ export function useCarrera(id: string | null) {
     const controller = new AbortController();
 
     async function cargar() {
-      if (!id) return;
-
       setCargando(true);
       setError(null);
 
       try {
-        const data = await carreraApi.obtenerPorId(id, controller.signal);
-        setCarrera(data);
+        const data = await carreraApi.listarSedes(controller.signal);
+        setSedes(data);
       } catch (err) {
         if (controller.signal.aborted || axios.isCancel(err)) return;
         setError(getApiErrorMessage(err));
-        setCarrera(null);
+        setSedes([]);
       } finally {
         if (!controller.signal.aborted) {
           setCargando(false);
@@ -44,7 +41,12 @@ export function useCarrera(id: string | null) {
     void cargar();
 
     return () => controller.abort();
-  }, [id]);
+  }, [habilitado, tick]);
 
-  return { carrera, cargando, error };
+  return {
+    sedes,
+    cargando,
+    error,
+    recargar: () => setTick((actual) => actual + 1),
+  };
 }

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { GraduationCap } from "lucide-react";
 
 import EmptyState from "../../../components/ui/emptyState";
@@ -14,9 +15,12 @@ interface CarrerasGridProps {
   cargando?: boolean;
   onSelect?: (carrera: Carrera) => void;
   onAdministrar?: (carrera: Carrera) => void;
+  onEditar?: (carrera: Carrera) => void;
   onVistaPrevia?: (carrera: Carrera) => void;
+  onDarDeBaja?: (carrera: Carrera) => void;
   tituloVacio?: string;
   descripcionVacia?: string;
+  accionVacia?: ReactNode;
   className?: string;
 }
 
@@ -26,9 +30,12 @@ export default function CarrerasGrid({
   cargando = false,
   onSelect,
   onAdministrar,
+  onEditar,
   onVistaPrevia,
+  onDarDeBaja,
   tituloVacio = "No hay carreras para mostrar",
   descripcionVacia = "Probá con otra búsqueda o cambiá los filtros.",
+  accionVacia,
   className = "",
 }: CarrerasGridProps) {
   if (cargando) {
@@ -45,6 +52,7 @@ export default function CarrerasGrid({
         title={tituloVacio}
         description={descripcionVacia}
         icon={<GraduationCap size={26} />}
+        action={accionVacia}
         className={className}
       />
     );
@@ -62,7 +70,9 @@ export default function CarrerasGrid({
             <CarreraAdminCard
               carrera={carrera}
               onAdministrar={onAdministrar}
+              onEditar={onEditar}
               onVistaPrevia={onVistaPrevia}
+              onDarDeBaja={onDarDeBaja}
             />
           ) : (
             <CarreraCard carrera={carrera} onSelect={onSelect} />
