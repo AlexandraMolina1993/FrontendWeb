@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Edit3, Eye, Plus, Search, X } from "lucide-react";
+import AdminLayout from "../../../../components/layouts/applayout";
 import ErrorState from "../../../../components/ui/errorState";
 import LoadingSpinner from "../../../../components/ui/loadingSpinner";
 import { actualizarMensaje, enviarMensaje, obtenerMensaje, obtenerMensajes } from "../../services/contact.api";
@@ -75,7 +76,8 @@ export default function ContactoAdminPage() {
     return <main className="mx-auto max-w-7xl px-5 py-12"><ErrorState title={unauthorized ? "Sesión no autorizada" : "No pudimos cargar los contactos"} description={unauthorized ? "Iniciá sesión para consultar las consultas recibidas." : undefined} onRetry={() => void messagesQuery.refetch()} /></main>;
   }
   return (
-    <main className="mx-auto max-w-7xl space-y-7 px-5 py-8 sm:px-8 lg:px-12">
+    <AdminLayout>
+      <main className="mx-auto max-w-7xl space-y-7 px-5 py-8 sm:px-8 lg:px-12">
       <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#B78700]">Comunicación</p>
@@ -107,8 +109,9 @@ export default function ContactoAdminPage() {
           <div className="mt-6 overflow-x-auto"><table className="w-full min-w-[700px] text-left text-sm"><thead className="border-b border-[#E5E7EB] text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-3 py-3 font-bold">ID</th><th className="px-3 py-3 font-bold">Nombre</th><th className="px-3 py-3 font-bold">Email</th><th className="px-3 py-3 font-bold">Asunto</th><th className="px-3 py-3 font-bold">Estado</th><th className="px-3 py-3 text-right font-bold">Acciones</th></tr></thead><tbody>{messages.length === 0 ? <tr><td colSpan={6} className="px-3 py-12 text-center text-slate-500">No hay contactos que coincidan con los filtros.</td></tr> : messages.map((message) => <tr key={message.id} className="border-b border-slate-100 transition hover:bg-[#fffef0]"><td className="px-3 py-4 font-bold text-slate-500">#{message.id}</td><td className="px-3 py-4 font-bold text-[#1F2937]">{message.nombre}</td><td className="px-3 py-4 text-slate-600">{message.email}</td><td className="max-w-[180px] truncate px-3 py-4 text-slate-600">{message.asunto}</td><td className="px-3 py-4"><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${message.estado === "RESPONDIDO" ? "bg-emerald-100 text-emerald-700" : "bg-orange-100 text-orange-700"}`}>{message.estado === "RESPONDIDO" ? "Respondido" : "Pendiente"}</span></td><td className="px-3 py-4"><div className="flex justify-end gap-2"><button type="button" onClick={() => startEditing(message)} className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-bold text-blue-700 transition hover:bg-blue-100" title="Editar contacto"><Edit3 size={14} /> Editar</button><button type="button" onClick={() => setSelected(message)} className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-200" title="Ver contacto"><Eye size={14} /> Ver</button></div></td></tr>)}</tbody></table></div>
         </div>
       </section>
-      {selected && <ContactDetailModal message={detailQuery.data ?? selected} loading={detailQuery.isLoading} onClose={() => setSelected(null)} />}
-    </main>
+        {selected && <ContactDetailModal message={detailQuery.data ?? selected} loading={detailQuery.isLoading} onClose={() => setSelected(null)} />}
+      </main>
+    </AdminLayout>
   );
 }
 

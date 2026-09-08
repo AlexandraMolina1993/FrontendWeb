@@ -15,6 +15,7 @@ import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/Pub
 import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage";
 import ContactoPage from "../../features/contacto/pages/public/ContactoPage";
+import ContactoAdminPage from "../../features/contacto/pages/admin/ContactoAdminPage";
 import PreinscripcionesPage from "../../features/preinscripciones/pages/PreinscripcionesPage";
 
 export const AppRouter = () => {
@@ -23,10 +24,7 @@ export const AppRouter = () => {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
-        <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
-        <Route path="/dashboard/contacto" element={<Dashboard />} />
         <Route path="/dashboard/componentes" element={<Dashboard />} />
         <Route path="/carreras" element={<CarrerasPage />} />
         <Route path="/carreras/:id" element={<CarreraDetallePage />} />
@@ -35,6 +33,9 @@ export const AppRouter = () => {
         <Route path="/sedes/:slug" element={<SedeDetallePage />} />
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard/contacto" element={<ContactoAdminPage />} />
+          <Route path="/dashboard/preinscripciones" element={<PreinscripcionesPage />} />
+          <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
           <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
           <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
           <Route path="/admin/sedes" element={<SedesAdminPage />} />
@@ -45,7 +46,7 @@ export const AppRouter = () => {
           <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
           <Route
             path="/admin/contacto"
-            element={<Navigate to="/dashboard/contacto" replace />}
+            element={<ContactoAdminPage />}
           />
         </Route>
       </Routes>

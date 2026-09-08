@@ -9,7 +9,7 @@ export async function enviarMensaje(input: ContactMessageInput) {
 }
 
 export async function actualizarMensaje(id: string, input: ContactMessageInput) {
-  const { data } = await apiClient.put<ContactMessage>(`/contacto/${id}`, input);
+  const { data } = await apiClient.patch<ContactMessage>(`/contacto/${id}`, input);
   return data;
 }
 

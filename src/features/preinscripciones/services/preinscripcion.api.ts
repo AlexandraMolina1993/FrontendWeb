@@ -1,5 +1,10 @@
 import { apiClient } from "../../../shared/lib/api/client";
 
+export interface CarreraPreinscripcion {
+  id?: string | number | null;
+  nombre?: string | null;
+}
+
 export interface PreinscripcionInput {
   nombre: string;
   apellido: string;
@@ -17,13 +22,20 @@ export interface PreinscripcionInput {
 export interface Preinscripcion extends PreinscripcionInput {
   id: string | number;
   estado?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-  carrera?: { id?: string | number; nombre?: string } | string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  carrera?: CarreraPreinscripcion | string | null;
 }
 
 export async function crearPreinscripcion(input: PreinscripcionInput) {
-  const { data } = await apiClient.post("/preinscripciones", input);
+  const payload = {
+    ...input,
+    documento: input.documento.trim(),
+    email: input.email.trim(),
+    telefono: input.telefono.trim(),
+  };
+
+  const { data } = await apiClient.post("/preinscripciones", payload);
   return data;
 }
 

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
+import AdminLayout from "../../../components/layouts/applayout";
 import ErrorState from "../../../components/ui/errorState";
 import LoadingSpinner from "../../../components/ui/loadingSpinner";
 import Modal from "../../../components/ui/modal";
@@ -40,7 +41,8 @@ export default function PreinscripcionesPage() {
   const unauthorized = (preinscripcionesQuery.error as AxiosError | null)?.response?.status === 401;
 
   return (
-    <main>
+    <AdminLayout>
+      <main>
       <section className="bg-[#171717] px-5 py-16 text-white sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-[#FFD21A]"><ClipboardList size={17} /> Admisiones</p>
@@ -53,7 +55,7 @@ export default function PreinscripcionesPage() {
         {preinscripcionesQuery.isError && <ErrorState
           title={unauthorized ? "Tu sesión venció" : "No pudimos cargar las preinscripciones"}
           description={unauthorized ? "Iniciá sesión para consultar las preinscripciones." : undefined}
-          onRetry={() => unauthorized ? navigate("/login") : void preinscripcionesQuery.refetch()}
+          onRetry={() => unauthorized ? navigate("/") : void preinscripcionesQuery.refetch()}
           retryLabel={unauthorized ? "Ir al inicio de sesión" : "Reintentar"}
         />}
         {preinscripcionesQuery.isSuccess && <Table
@@ -115,6 +117,7 @@ export default function PreinscripcionesPage() {
           </dl>
         )}
       </Modal>
-    </main>
+      </main>
+    </AdminLayout>
   );
 }
