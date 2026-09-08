@@ -155,7 +155,7 @@ export default function SidebarAdmin({
   nombreInstituto = "Instituto Superior Villa del Rosario",
   nombreCorto = "ISVDR",
   onCerrarSesion,
-  rutaLogin = "/admin/login",
+  rutaLogin = "/",
 }: SidebarAdminProps) {
   const navigate = useNavigate();
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
@@ -197,7 +197,7 @@ export default function SidebarAdmin({
           <button
             type="button"
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/");
               cerrar?.();
             }}
             className={sidebarAdminBrandButtonStyle}

@@ -21,8 +21,7 @@ export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -46,7 +45,10 @@ export const AppRouter = () => {
         <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
         <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/admin/contacto" element={<Navigate to="/dashboard/contacto" replace />} />
+          <Route
+            path="/admin/contacto"
+            element={<Navigate to="/dashboard/contacto" replace />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
