@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
 import { LoginPage } from "../../features/auth/pages/LoginPage";
 import Dashboard from "../../features/Dashboard/views/Dashboard";
 import CarreraDetallePage from "../../features/carreras/pages/CarreraDetallePage";
@@ -15,7 +16,6 @@ import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPag
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage";
 import ContactoPage from "../../features/contacto/pages/public/ContactoPage";
 import PreinscripcionesPage from "../../features/preinscripciones/pages/PreinscripcionesPage";
-import { ProtectedRoute } from "./ProtectedRoute";
 
 export const AppRouter = () => {
   return (
@@ -24,29 +24,25 @@ export const AppRouter = () => {
         <Route path="/" element={<LoginPage />} />
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
+        <Route path="/carreras" element={<CarrerasPage />} />
+        <Route path="/carreras/:id" element={<CarreraDetallePage />} />
+        <Route path="/institucional" element={<InstitucionalPage />} />
+        <Route path="/sedes" element={<SedesPage />} />
+        <Route path="/sedes/:slug" element={<SedeDetallePage />} />
+
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
           <Route path="/dashboard/contacto" element={<Dashboard />} />
           <Route path="/dashboard/componentes" element={<Dashboard />} />
-        </Route>
-        <Route path="/carreras" element={<CarrerasPage />} />
-        <Route path="/carreras/:id" element={<CarreraDetallePage />} />
-        <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
-        <Route path="/institucional" element={<InstitucionalPage />} />
-        <Route path="/sedes" element={<SedesPage />} />
-        <Route path="/sedes/:slug" element={<SedeDetallePage />} />
-        <Route
-          path="/admin/institucional"
-          element={<InstitucionalAdminPage />}
-        />
-        <Route path="/admin/sedes" element={<SedesAdminPage />} />
-        <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
-        <Route path="/admin/usuarios" element={<UsuariosAdminPage />} />
-        <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
-        <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
-        <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
-        <Route element={<ProtectedRoute />}>
+          <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
+          <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
+          <Route path="/admin/sedes" element={<SedesAdminPage />} />
+          <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
+          <Route path="/admin/usuarios" element={<UsuariosAdminPage />} />
+          <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
+          <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
+          <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
           <Route
             path="/admin/contacto"
             element={<Navigate to="/dashboard/contacto" replace />}

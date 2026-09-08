@@ -7,6 +7,7 @@ interface AuthState {
   usuario: Usuario | null;
   isAuthenticated: boolean;
   setCredentials: (usuario: Usuario, token: string) => void;
+  restoreSession: () => void;
   logout: () => void;
 }
 
@@ -14,6 +15,14 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   usuario: null,
   isAuthenticated: Boolean(tokenStorage.getToken()),
+
+  restoreSession: () => {
+    const token = tokenStorage.getToken();
+    set({
+      isAuthenticated: Boolean(token),
+      usuario: token ? { id: '', nombre: '', apellido: '', email: '', rol: '' } : null,
+    });
+  },
   
   // Esta función se llamará cuando el usuario inicie sesión con éxito
   setCredentials: (usuario, token) => {
