@@ -53,15 +53,6 @@ export default function SedesAdminPage() {
     }
   }
 
-  async function alternar(sede: Sede) {
-    try {
-      await sedeApi.cambiarEstado(sede.id, !sede.activa);
-      recargar();
-    } catch (error) {
-      window.alert(error instanceof Error ? error.message : "No se pudo actualizar el estado.");
-    }
-  }
-
   return (
     <AdminLayout>
       <div className="space-y-8 pb-8">
@@ -79,7 +70,7 @@ export default function SedesAdminPage() {
 
         {!cargando && !error && (
           <>
-            <SedesTable sedes={sedes} onEdit={editar} onDelete={(sede) => void eliminar(sede)} onToggle={(sede) => void alternar(sede)} />
+            <SedesTable sedes={sedes} onEdit={editar} onDelete={(sede) => void eliminar(sede)} />
             {seleccionada && values && (
               <section>
                 <div className="mb-4 flex items-center justify-between gap-4">

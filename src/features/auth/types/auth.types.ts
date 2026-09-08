@@ -24,8 +24,12 @@ export interface RecuperarPasswordInput {
 // --- 3. RESPUESTAS (RESPONSES) ---
 // Lo que nos devuelve el backend al iniciar sesión con éxito (LoginResponse)
 export interface LoginResponse {
-  token: string;
-  usuario: Usuario;
+  success: boolean;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    usuario: Usuario;
+  };
 }
 
 // --- 4. MANEJO DE ERRORES ---
