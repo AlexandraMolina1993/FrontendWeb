@@ -8,7 +8,7 @@ export const ProtectedRoute = () => {
   // Si no está autenticado, lo redirigimos a la página de login.
   // El "replace" evita que el usuario pueda volver atrás usando la flecha del navegador.
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Si está autenticado, renderizamos la página que solicitó (el Outlet representa las rutas hijas)

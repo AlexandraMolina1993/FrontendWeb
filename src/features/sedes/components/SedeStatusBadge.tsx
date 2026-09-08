@@ -1,0 +1,1 @@
+export default function SedeStatusBadge({ activa }: { activa: boolean }) { return <span className={`rounded-full px-3 py-1 text-xs font-bold ${activa ? "bg-emerald-50 text-emerald-700" : "bg-zinc-100 text-zinc-500"}`}>{activa ? "Activa" : "Inactiva"}</span>; }

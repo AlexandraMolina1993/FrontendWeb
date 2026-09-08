@@ -13,7 +13,7 @@ interface AuthState {
 // Creamos el "store" (la caja fuerte donde guardamos la sesión)
 export const useAuthStore = create<AuthState>((set) => ({
   usuario: null,
-  isAuthenticated: false,
+  isAuthenticated: Boolean(tokenStorage.getToken()),
   
   // Esta función se llamará cuando el usuario inicie sesión con éxito
   setCredentials: (usuario, token) => {
