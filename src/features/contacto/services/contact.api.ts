@@ -2,11 +2,8 @@ import { apiClient } from "../../../shared/lib/api/client";
 import type { ContactMessage, ContactMessageInput, ContactMessageStatus, ContactReplyInput } from "../types/contact.types";
 
 export async function enviarMensaje(input: ContactMessageInput) {
-  const { nombre, email, mensaje } = input;
   const { data } = await apiClient.post<ContactMessage>("/contacto", {
-    nombre,
-    email,
-    mensaje,
+    ...input,
   });
   return data;
 }

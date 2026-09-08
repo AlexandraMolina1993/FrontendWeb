@@ -1,106 +1,120 @@
-import { useEffect, useState } from "react";
-import { ClipboardCheck, Send } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { CalendarDays, ClipboardList, Eye, Mail, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
-import { carreraApi } from "../../carreras/services/carrera.api";
-import type { Carrera } from "../../carreras/types/carrera.types";
-import { crearPreinscripcion, type PreinscripcionInput } from "../services/preinscripcion.api";
+import ErrorState from "../../../components/ui/errorState";
+import LoadingSpinner from "../../../components/ui/loadingSpinner";
+import Modal from "../../../components/ui/modal";
+import Table from "../../../components/ui/table";
+import { obtenerPreinscripciones, type Preinscripcion } from "../services/preinscripcion.api";
 
-const initialForm: PreinscripcionInput = {
-  nombre: "",
-  apellido: "",
-  documento: "",
-  fechaNacimiento: "",
-  nacionalidad: "",
-  direccion: "",
-  localidad: "",
-  provincia: "",
-  email: "",
-  telefono: "",
-  carreraId: "",
-};
+function formatDate(value?: string) {
+  if (!value) return "Sin fecha";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString("es-AR");
+}
+
+function getCarrera(preinscripcion: Preinscripcion) {
+  if (typeof preinscripcion.carrera === "string") return preinscripcion.carrera;
+  return preinscripcion.carrera?.nombre ?? preinscripcion.carreraId;
+}
+
+function Detail({ label, value }: { label: string; value?: string | number | null }) {
+  return (
+    <div className="border-b border-zinc-200 pb-3">
+      <dt className="text-xs font-bold uppercase tracking-wide text-zinc-500">{label}</dt>
+      <dd className="mt-1 break-words text-sm font-semibold text-zinc-900">{value || "Sin información"}</dd>
+    </div>
+  );
+}
 
 export default function PreinscripcionesPage() {
-  const [form, setForm] = useState(initialForm);
-  const [sent, setSent] = useState(false);
-  const [carrerasDisponibles, setCarrerasDisponibles] = useState<Carrera[]>([]);
-  const [cargandoCarreras, setCargandoCarreras] = useState(true);
-  const [errorCarreras, setErrorCarreras] = useState(false);
-  const mutation = useMutation({ mutationFn: crearPreinscripcion });
-  const update = (field: keyof PreinscripcionInput, value: string) =>
-    setForm((current) => ({ ...current, [field]: value }));
-
-  useEffect(() => {
-    const controller = new AbortController();
-    void carreraApi.listar({}, controller.signal)
-      .then(setCarrerasDisponibles)
-      .catch(() => setErrorCarreras(true))
-      .finally(() => setCargandoCarreras(false));
-    return () => controller.abort();
-  }, []);
-
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    try {
-      await mutation.mutateAsync(form);
-      setSent(true);
-      setForm(initialForm);
-    } catch {
-      setSent(false);
-    }
-  }
-
-  if (sent) {
-    return (
-      <main>
-        <section className="bg-[#171717] px-5 py-16 text-white sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-7xl">
-            <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-[#FFD21A]"><ClipboardCheck size={17} /> Admisiones</p>
-            <h1 className="mt-3 max-w-2xl text-4xl font-black sm:text-5xl">Preinscribite en el instituto.</h1>
-          </div>
-        </section>
-        <section className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
-          <div className="border border-emerald-200 bg-emerald-50 p-8 text-center">
-            <ClipboardCheck className="mx-auto text-emerald-600" size={42} />
-            <h2 className="mt-4 text-2xl font-black text-emerald-950">Preinscripción recibida</h2>
-            <p className="mt-2 text-emerald-800">Gracias por completar tus datos. El instituto se pondrá en contacto con vos.</p>
-            <button type="button" onClick={() => { setSent(false); mutation.reset(); }} className="mt-6 border border-emerald-700 px-4 py-2 font-bold text-emerald-800">Enviar otra preinscripción</button>
-          </div>
-        </section>
-      </main>
-    );
-  }
+  const navigate = useNavigate();
+  const [selected, setSelected] = useState<Preinscripcion | null>(null);
+  const preinscripcionesQuery = useQuery({
+    queryKey: ["preinscripciones"],
+    queryFn: obtenerPreinscripciones,
+  });
+  const unauthorized = (preinscripcionesQuery.error as AxiosError | null)?.response?.status === 401;
 
   return (
     <main>
       <section className="bg-[#171717] px-5 py-16 text-white sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-[#FFD21A]"><ClipboardCheck size={17} /> Admisiones</p>
-          <h1 className="mt-3 max-w-2xl text-4xl font-black sm:text-5xl">Preinscribite en el instituto.</h1>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-white/70">Completá tus datos y te contactaremos para acompañarte en el proceso de ingreso.</p>
+          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-[#FFD21A]"><ClipboardList size={17} /> Admisiones</p>
+          <h1 className="mt-3 max-w-2xl text-4xl font-black sm:text-5xl">Preinscripciones recibidas</h1>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-white/70">Consultá las solicitudes de ingreso registradas en la API.</p>
         </div>
       </section>
-      <section className="mx-auto max-w-4xl px-5 py-14 sm:px-8">
-        <form onSubmit={submit} className="border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <label className="text-sm font-bold text-[#171717]">Nombre<input required value={form.nombre} onChange={(event) => update("nombre", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Apellido<input required value={form.apellido} onChange={(event) => update("apellido", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Documento<input required value={form.documento} onChange={(event) => update("documento", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Fecha de nacimiento<input required type="date" value={form.fechaNacimiento} onChange={(event) => update("fechaNacimiento", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Nacionalidad<input required value={form.nacionalidad} onChange={(event) => update("nacionalidad", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Teléfono<input required value={form.telefono} onChange={(event) => update("telefono", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717] sm:col-span-2">Dirección<input required value={form.direccion} onChange={(event) => update("direccion", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Localidad<input required value={form.localidad} onChange={(event) => update("localidad", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717]">Provincia<input required value={form.provincia} onChange={(event) => update("provincia", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-            <label className="text-sm font-bold text-[#171717] sm:col-span-2">Correo electrónico<input required type="email" value={form.email} onChange={(event) => update("email", event.target.value)} className="mt-2 w-full border border-slate-300 px-3 py-3 font-normal outline-none focus:border-[#C49200]" /></label>
-          </div>
-          <label className="mt-5 block text-sm font-bold text-[#171717]">Carrera<select required value={form.carreraId} onChange={(event) => update("carreraId", event.target.value)} disabled={cargandoCarreras || carrerasDisponibles.length === 0} className="mt-2 w-full border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-[#C49200] disabled:bg-slate-100"><option value="">{cargandoCarreras ? "Cargando carreras..." : "Seleccioná una carrera"}</option>{carrerasDisponibles.map((carrera) => <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>)}</select></label>
-          {errorCarreras && <p className="mt-3 text-sm text-amber-700">No pudimos cargar las carreras. Intentá nuevamente más tarde.</p>}
-          {!cargandoCarreras && !errorCarreras && carrerasDisponibles.length === 0 && <p className="mt-3 border-l-4 border-[#C49200] bg-[#fff8db] p-3 text-sm text-[#604d00]">No hay carreras disponibles para preinscribirse en este momento.</p>}
-          {mutation.isError && <p role="alert" className="mt-4 border-l-4 border-red-500 bg-red-50 p-3 text-sm text-red-800">No pudimos enviar la preinscripción. Revisá los datos e intentá nuevamente.</p>}
-          <button type="submit" disabled={mutation.isPending || cargandoCarreras || carrerasDisponibles.length === 0} className="mt-6 inline-flex items-center gap-2 bg-[#171717] px-5 py-3 font-bold text-white hover:bg-[#C49200] disabled:cursor-not-allowed disabled:opacity-60">{mutation.isPending ? "Enviando..." : "Enviar preinscripción"}<Send size={17} /></button>
-        </form>
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:px-12">
+        {preinscripcionesQuery.isLoading && <LoadingSpinner text="Cargando preinscripciones..." />}
+        {preinscripcionesQuery.isError && <ErrorState
+          title={unauthorized ? "Tu sesión venció" : "No pudimos cargar las preinscripciones"}
+          description={unauthorized ? "Iniciá sesión para consultar las preinscripciones." : undefined}
+          onRetry={() => unauthorized ? navigate("/login") : void preinscripcionesQuery.refetch()}
+          retryLabel={unauthorized ? "Ir al inicio de sesión" : "Reintentar"}
+        />}
+        {preinscripcionesQuery.isSuccess && <Table
+          caption="Listado de preinscripciones"
+          data={preinscripcionesQuery.data}
+          getRowKey={(item) => item.id}
+          emptyMessage="Todavía no hay preinscripciones registradas."
+          columns={[
+            { key: "aspirante", header: "Aspirante", render: (item) => <span className="font-bold text-zinc-900">{item.nombre} {item.apellido}</span> },
+            { key: "documento", header: "Documento", render: (item) => item.documento },
+            { key: "carrera", header: "Carrera", render: getCarrera },
+            { key: "contacto", header: "Contacto", render: (item) => <span className="inline-flex items-center gap-2 whitespace-nowrap"><Mail size={15} />{item.email}</span> },
+            { key: "fecha", header: "Registro", render: (item) => <span className="inline-flex items-center gap-2 whitespace-nowrap text-zinc-500"><CalendarDays size={15} />{formatDate(item.createdAt)}</span> },
+            { key: "estado", header: "Estado", render: (item) => item.estado ?? "Pendiente" },
+            {
+              key: "detalles",
+              header: <span className="sr-only">Detalles</span>,
+              cellClassName: "text-right",
+              render: (item) => (
+                <button
+                  type="button"
+                  onClick={() => setSelected(item)}
+                  className="inline-flex items-center gap-2 font-bold text-[#8B6800] hover:text-[#5F4900]"
+                  aria-label={`Ver detalles de ${item.nombre} ${item.apellido}`}
+                >
+                  <Eye size={17} />
+                  <span className="hidden sm:inline">Ver detalles</span>
+                </button>
+              ),
+            },
+          ]}
+        />}
+        {preinscripcionesQuery.isSuccess && <button type="button" onClick={() => void preinscripcionesQuery.refetch()} className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-[#B78700]"><RefreshCw size={16} /> Actualizar listado</button>}
       </section>
+      <Modal
+        abierto={selected !== null}
+        cerrar={() => setSelected(null)}
+        titulo="Detalle de preinscripción"
+        descripcion={selected ? `${selected.nombre} ${selected.apellido}` : undefined}
+        icono={<ClipboardList size={20} />}
+        pie={<button type="button" onClick={() => setSelected(null)} className="border border-zinc-300 px-4 py-2 text-sm font-bold text-zinc-700 hover:bg-zinc-100">Cerrar</button>}
+      >
+        {selected && (
+          <dl className="grid gap-4 bg-white p-5 sm:grid-cols-2">
+            <Detail label="Nombre" value={selected.nombre} />
+            <Detail label="Apellido" value={selected.apellido} />
+            <Detail label="Documento" value={selected.documento} />
+            <Detail label="Fecha de nacimiento" value={selected.fechaNacimiento} />
+            <Detail label="Nacionalidad" value={selected.nacionalidad} />
+            <Detail label="Carrera" value={getCarrera(selected)} />
+            <Detail label="Correo electrónico" value={selected.email} />
+            <Detail label="Teléfono" value={selected.telefono} />
+            <Detail label="Dirección" value={selected.direccion} />
+            <Detail label="Localidad" value={selected.localidad} />
+            <Detail label="Provincia" value={selected.provincia} />
+            <Detail label="Estado" value={selected.estado ?? "Pendiente"} />
+            <Detail label="Fecha de registro" value={formatDate(selected.createdAt)} />
+            <Detail label="Identificador" value={selected.id} />
+          </dl>
+        )}
+      </Modal>
     </main>
   );
 }

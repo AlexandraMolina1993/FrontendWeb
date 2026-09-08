@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import AdminLayout from "../../../components/layouts/applayout";
-import ContactoPage from "../../contacto/pages/public/ContactoPage";
+import ContactoAdminPage from "../../contacto/pages/admin/ContactoAdminPage";
 import PreinscripcionesPage from "../../preinscripciones/pages/PreinscripcionesPage";
 import Badge from "../../../components/ui/badge";
 import Button from "../../../components/ui/button";
@@ -106,7 +106,7 @@ export default function Dashboard() {
   if (location.pathname === "/dashboard/contacto") {
     return (
       <AdminLayout>
-        <ContactoPage />
+        <ContactoAdminPage />
       </AdminLayout>
     );
   }
