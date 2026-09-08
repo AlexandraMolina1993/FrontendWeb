@@ -13,7 +13,7 @@ import SedeNuevaPage from "../../features/sedes/pages/admin/SedeNuevaPage";
 import PublicacionesAdminPage from "../../features/publicaciones/pages/admin/PublicacionesAdminPage";
 import GaleriaAdminPage from "../../features/galeria/pages/admin/GaleriaAdminPage";
 import { UsuariosAdminPage } from "../../features/usuarios/pages/UsuariosAdminPage";
-import ContactoPage from "../../features/contacto/pages/public/ContactoPage";
+import ContactoAdminPage from "../../features/contacto/pages/admin/ContactoAdminPage";
 import PreinscripcionesPage from "../../features/preinscripciones/pages/PreinscripcionesPage";
 
 export const AppRouter = () => {
@@ -21,12 +21,12 @@ export const AppRouter = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/contacto" element={<ContactoPage />} />
-        <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
+        <Route path="/contacto" element={<ContactoAdminPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/preinscripciones" element={<Dashboard />} />
-        <Route path="/dashboard/contacto" element={<Dashboard />} />
-        <Route path="/dashboard/componentes" element={<Dashboard />} />
+        <Route
+          path="/dashboard/preinscripciones"
+          element={<PreinscripcionesPage />}
+        />
         <Route path="/carreras" element={<CarrerasPage />} />
         <Route path="/carreras/:id" element={<CarreraDetallePage />} />
         <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
