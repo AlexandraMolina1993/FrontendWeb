@@ -119,15 +119,6 @@ export const sidebarAdminItems: SidebarItem[] = [
     ],
   },
   {
-    id: "usuarios",
-    label: "Usuarios",
-    icon: <Users />,
-    subitems: [
-      { label: "Nuevo usuario", to: "/admin/usuarios/nuevo" },
-      { label: "Ver usuarios", to: "/admin/usuarios" },
-    ],
-  },
-  {
     id: "componentes",
     label: "Componentes UI",
     section: "Herramientas",
