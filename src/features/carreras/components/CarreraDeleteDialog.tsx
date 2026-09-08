@@ -20,15 +20,15 @@ export default function CarreraDeleteDialog({
   return (
     <ConfirmDialog
       abierto={abierto}
-      titulo="Eliminar carrera"
+      titulo="Dar de baja la carrera"
       descripcion={
         carrera
-          ? `Se va a eliminar "${carrera.nombre}". Esta acción no se puede deshacer.`
-          : "Se va a eliminar esta carrera. Esta acción no se puede deshacer."
+          ? `Se va a dar de baja "${carrera.nombre}". Deja de aparecer en el listado público.`
+          : "Se va a dar de baja esta carrera. Deja de aparecer en el listado público."
       }
       confirmar={confirmar}
       cancelar={cancelar}
-      textoConfirmar="Sí, eliminar"
+      textoConfirmar="Sí, dar de baja"
       textoCancelar="Cancelar"
       peligro
       cargando={cargando}

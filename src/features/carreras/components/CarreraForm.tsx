@@ -10,14 +10,15 @@ import type {
   Carrera,
   CarreraFormValues,
   CarreraModalidad,
+  SedeOpcion,
 } from "../types/carrera.types";
 import {
+  CARRERA_DURACION_MAX,
+  CARRERA_DURACION_MIN,
   CARRERA_FORM_VACIO,
   CARRERA_MODALIDAD_LABELS,
   carreraAFormulario,
 } from "../types/carrera.types";
-
-import CarreraStatusSelector from "./CarreraStatusSelector";
 
 interface CarreraFormProps {
   carrera?: Partial<Carrera> | null;
@@ -25,6 +26,10 @@ interface CarreraFormProps {
   onCancel?: () => void;
   cargando?: boolean;
   errores?: Partial<Record<keyof CarreraFormValues, string>>;
+  sedesOpciones?: SedeOpcion[];
+  cargandoSedes?: boolean;
+  errorSedes?: string | null;
+  onReintentarSedes?: () => void;
   className?: string;
 }
 
@@ -38,6 +43,10 @@ export default function CarreraForm({
   onCancel,
   cargando = false,
   errores = {},
+  sedesOpciones = [],
+  cargandoSedes = false,
+  errorSedes = null,
+  onReintentarSedes,
   className = "",
 }: CarreraFormProps) {
   const [values, setValues] = useState<CarreraFormValues>(() =>
@@ -69,6 +78,20 @@ export default function CarreraForm({
     onSubmit(values);
   }
 
+  const sedeSeleccionada = values.sedes[0] ?? "";
+  const opcionesSede = sedesOpciones.map((sede) => ({
+    value: sede.id,
+    label: sede.ciudad ? `${sede.nombre} · ${sede.ciudad}` : sede.nombre,
+  }));
+
+  const ayudaSedes = cargandoSedes
+    ? "Cargando sedes..."
+    : errorSedes
+      ? undefined
+      : sedesOpciones.length === 0
+        ? "Todavía no hay sedes publicadas."
+        : undefined;
+
   return (
     <form onSubmit={handleSubmit} className={`space-y-8 ${className}`} noValidate>
       <div className="grid gap-5 sm:grid-cols-2">
@@ -90,8 +113,8 @@ export default function CarreraForm({
         <Input
           label="Duración en años"
           type="number"
-          min={1}
-          max={10}
+          min={CARRERA_DURACION_MIN}
+          max={CARRERA_DURACION_MAX}
           placeholder="Ej. 3"
           value={values.duracionAnios}
           disabled={cargando}
@@ -109,11 +132,34 @@ export default function CarreraForm({
             actualizar("modalidad", event.target.value as CarreraModalidad)
           }
         />
-        <CarreraStatusSelector
-          value={values.activa}
-          disabled={cargando}
-          onChange={(activa) => actualizar("activa", activa)}
-        />
+        <div className="sm:col-span-2">
+          <Select
+            label="Sede"
+            value={sedeSeleccionada}
+            opciones={opcionesSede}
+            placeholder={
+              cargandoSedes ? "Cargando sedes..." : "Seleccionar una sede"
+            }
+            disabled={cargando || cargandoSedes || opcionesSede.length === 0}
+            error={erroresVisibles.sedes ?? errorSedes ?? undefined}
+            ayuda={ayudaSedes}
+            onChange={(event) =>
+              actualizar(
+                "sedes",
+                event.target.value ? [event.target.value] : [],
+              )
+            }
+          />
+          {errorSedes && onReintentarSedes && (
+            <button
+              type="button"
+              onClick={onReintentarSedes}
+              className="mt-2 text-sm font-semibold text-[#C49200] underline"
+            >
+              Reintentar sedes
+            </button>
+          )}
+        </div>
         <div className="sm:col-span-2">
           <Textarea
             label="Descripción"

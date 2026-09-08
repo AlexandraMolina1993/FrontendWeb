@@ -22,6 +22,8 @@ export function useCarrera(id: string | null) {
     const controller = new AbortController();
 
     async function cargar() {
+      if (!id) return;
+
       setCargando(true);
       setError(null);
 

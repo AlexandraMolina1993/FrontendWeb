@@ -1,0 +1,6 @@
+import type { ContactMessageStatus } from "../../types/contact.types";
+
+interface Props { search: string; status: ContactMessageStatus | "TODOS"; onSearch: (value: string) => void; onStatus: (value: ContactMessageStatus | "TODOS") => void; }
+export default function MessageFilters({ search, status, onSearch, onStatus }: Props) {
+  return <div className="flex flex-col gap-3 border border-slate-200 bg-white p-4 sm:flex-row"><label className="flex-1 text-sm font-bold text-[#171717]">Buscar<input value={search} onChange={(event) => onSearch(event.target.value)} placeholder="Nombre, correo o asunto" className="mt-2 w-full border border-slate-300 px-3 py-2 font-normal outline-none focus:border-[#C49200]" /></label><label className="text-sm font-bold text-[#171717] sm:w-52">Estado<select value={status} onChange={(event) => onStatus(event.target.value as ContactMessageStatus | "TODOS")} className="mt-2 w-full border border-slate-300 bg-white px-3 py-2 font-normal outline-none focus:border-[#C49200]"><option value="TODOS">Todos</option><option value="NUEVO">Nuevo</option><option value="LEIDO">Leído</option><option value="RESPONDIDO">Respondido</option><option value="ARCHIVADO">Archivado</option></select></label></div>;
+}

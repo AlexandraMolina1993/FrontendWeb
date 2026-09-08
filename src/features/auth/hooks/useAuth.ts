@@ -20,7 +20,7 @@ export const useAuth = () => {
       const response = await authApi.login(credentials);
       console.log("ESTO DEVUELVE EL LOGIN:", response);
       // 2. Si todo sale bien, guardamos el token y el usuario en el estado global
-      setCredentials(response.data.usuario, response.data.accessToken);
+      setCredentials(response.usuario, response.token);
       
     } catch (err) {
       // 3. Si falla, capturamos el mensaje de error del backend

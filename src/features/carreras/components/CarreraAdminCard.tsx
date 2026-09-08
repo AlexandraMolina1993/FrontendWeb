@@ -1,4 +1,4 @@
-import { BookOpen, Eye, MoreHorizontal } from "lucide-react";
+import { BookOpen, Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import Card from "../../../components/ui/card";
 import DropdownMenu from "../../../components/ui/dropdownMenu";
@@ -15,23 +15,42 @@ import {
 interface CarreraAdminCardProps {
   carrera: Carrera;
   onAdministrar?: (carrera: Carrera) => void;
+  onEditar?: (carrera: Carrera) => void;
   onVistaPrevia?: (carrera: Carrera) => void;
+  onDarDeBaja?: (carrera: Carrera) => void;
   className?: string;
 }
 
 export default function CarreraAdminCard({
   carrera,
   onAdministrar,
+  onEditar,
   onVistaPrevia,
+  onDarDeBaja,
   className = "",
 }: CarreraAdminCardProps) {
   const porcentaje = completitudCarrera(carrera);
+  const abrirEdicion = onEditar ?? onAdministrar;
   const acciones = [
+    abrirEdicion && {
+      id: "editar",
+      label: "Editar",
+      icon: <Pencil size={16} />,
+      onClick: () => abrirEdicion(carrera),
+    },
     onVistaPrevia && {
       id: "preview",
       label: "Vista previa",
       icon: <Eye size={16} />,
       onClick: () => onVistaPrevia(carrera),
+    },
+    onDarDeBaja && {
+      id: "baja",
+      label: "Dar de baja",
+      icon: <Trash2 size={16} />,
+      danger: true,
+      separatorBefore: Boolean(abrirEdicion || onVistaPrevia),
+      onClick: () => onDarDeBaja(carrera),
     },
   ].filter((item): item is NonNullable<typeof item> => Boolean(item));
 
