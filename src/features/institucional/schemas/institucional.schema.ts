@@ -104,5 +104,13 @@ export function validarAutoridad(values: AutoridadFormValues) {
   const errores: Partial<Record<keyof AutoridadFormValues, string>> = {};
   if (!values.nombre.trim()) errores.nombre = "El nombre es obligatorio.";
   if (!values.cargo.trim()) errores.cargo = "El cargo es obligatorio.";
+  if (values.imagen.trim()) {
+    try {
+      const imagenUrl = new URL(values.imagen.trim());
+      if (!/^https?:$/.test(imagenUrl.protocol)) errores.imagen = "La imagen debe ser una URL http o https.";
+    } catch {
+      errores.imagen = "Ingresá una URL de imagen válida o dejá el campo vacío.";
+    }
+  }
   return errores;
 }

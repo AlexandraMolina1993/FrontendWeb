@@ -17,6 +17,11 @@ export function getApiErrorMessage(error: unknown): string {
     const data = error.response?.data as ApiErrorResponse | undefined;
 
     if (data?.message) {
+      if (data.details) {
+        const detalles = Array.isArray(data.details) ? data.details : Object.values(data.details);
+        const textoDetalles = detalles.filter(Boolean).join("; ");
+        return textoDetalles ? `${data.message} ${textoDetalles}` : data.message;
+      }
       return data.message;
     }
 
