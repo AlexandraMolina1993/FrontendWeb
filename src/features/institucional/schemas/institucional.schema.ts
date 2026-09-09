@@ -2,58 +2,59 @@ export interface Autoridad {
   id: string;
   nombre: string;
   cargo: string;
-  descripcion: string | null;
-  imagenUrl: string | null;
+  imagen: string;
   orden: number;
-  activa: boolean;
+  descripcion: string;
 }
 
 export interface InformacionInstitucional {
-  id?: string;
-  nombreInstitucion: string;
+  id: string;
+  sedeId: string;
+  nombre: string;
   lema: string;
   historia: string;
   mision: string;
   vision: string;
-  valores: string[];
+  createdAt: string;
+  updatedAt: string;
   autoridades: Autoridad[];
 }
 
 export interface InstitucionalFormValues {
-  nombreInstitucion: string;
+  nombre: string;
   lema: string;
   historia: string;
   mision: string;
   vision: string;
-  valores: string[];
 }
 
 export interface AutoridadFormValues {
   nombre: string;
   cargo: string;
+  imagen: string;
+  orden: number;
   descripcion: string;
-  imagenUrl: string;
-  orden: string;
-  activa: boolean;
 }
 
 export const INFORMACION_INSTITUCIONAL_VACIA: InformacionInstitucional = {
-  nombreInstitucion: "Instituto Superior Villa del Rosario",
+  id: "",
+  sedeId: "",
+  nombre: "Instituto Superior Villa del Rosario",
   lema: "Educación que transforma",
   historia: "",
   mision: "",
   vision: "",
-  valores: [],
+  createdAt: "",
+  updatedAt: "",
   autoridades: [],
 };
 
 export const AUTORIDAD_FORM_VACIO: AutoridadFormValues = {
   nombre: "",
   cargo: "",
+  imagen: "",
+  orden: 1,
   descripcion: "",
-  imagenUrl: "",
-  orden: "1",
-  activa: true,
 };
 
 export function isAutoridad(value: unknown): value is Autoridad {
@@ -63,10 +64,9 @@ export function isAutoridad(value: unknown): value is Autoridad {
     typeof item.id === "string" &&
     typeof item.nombre === "string" &&
     typeof item.cargo === "string" &&
-    (item.descripcion === null || typeof item.descripcion === "string") &&
-    (item.imagenUrl === null || typeof item.imagenUrl === "string") &&
+    typeof item.imagen === "string" &&
     typeof item.orden === "number" &&
-    typeof item.activa === "boolean"
+    typeof item.descripcion === "string"
   );
 }
 
@@ -78,25 +78,25 @@ export function isInformacionInstitucional(value: unknown): value is Informacion
   if (!value || typeof value !== "object") return false;
   const item = value as Record<string, unknown>;
   return (
-    typeof item.nombreInstitucion === "string" &&
+    typeof item.id === "string" &&
+    typeof item.sedeId === "string" &&
+    typeof item.nombre === "string" &&
     typeof item.lema === "string" &&
     typeof item.historia === "string" &&
     typeof item.mision === "string" &&
     typeof item.vision === "string" &&
-    Array.isArray(item.valores) &&
-    item.valores.every((valor) => typeof valor === "string")
+    typeof item.createdAt === "string" &&
+    typeof item.updatedAt === "string" &&
+    isAutoridadList(item.autoridades)
   );
 }
 
 export function validarInstitucional(values: InstitucionalFormValues) {
   const errores: Partial<Record<keyof InstitucionalFormValues, string>> = {};
-  if (!values.nombreInstitucion.trim()) errores.nombreInstitucion = "El nombre es obligatorio.";
+  if (!values.nombre.trim()) errores.nombre = "El nombre es obligatorio.";
   if (!values.historia.trim()) errores.historia = "La historia es obligatoria.";
   if (!values.mision.trim()) errores.mision = "La misión es obligatoria.";
   if (!values.vision.trim()) errores.vision = "La visión es obligatoria.";
-  if (values.valores.filter((valor) => valor.trim()).length === 0) {
-    errores.valores = "Agregá al menos un valor institucional.";
-  }
   return errores;
 }
 
