@@ -57,8 +57,18 @@ export default function CarreraCard({
         </div>
       }
     >
-      <div className="-mx-5 -mt-5 mb-5 flex h-40 items-center justify-center bg-[#171717] text-[#FFD21A]">
-        <GraduationCap size={42} aria-hidden="true" />
+      <div className="-mx-5 -mt-5 mb-5 h-40 overflow-hidden bg-[#171717]">
+        {carrera.imagenUrl ? (
+          <img
+            src={carrera.imagenUrl}
+            alt={carrera.nombre}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-[#FFD21A]">
+            <GraduationCap size={42} aria-hidden="true" />
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

@@ -21,6 +21,7 @@ import { useSedesOpciones } from "../hooks/useSedesOpciones";
 import { formularioACarreraInput, validarBusqueda } from "../schemas/carrera.schema";
 import { carreraApi } from "../services/carrera.api";
 import type { Carrera, CarreraFiltros, CarreraFormValues } from "../types/carrera.types";
+import { CARRERA_MODALIDAD_LABELS } from "../types/carrera.types";
 
 const FILTROS_VACIOS: CarreraFiltros = { modalidad: "" };
 
@@ -210,11 +211,13 @@ export default function CarrerasAdminPage() {
             ? "Nueva carrera"
             : modal === "editar"
               ? "Editar carrera"
-              : "Detalle de la carrera"
+              : (carreraModal?.nombre ?? "Detalle de la carrera")
         }
         descripcion={
           modal === "preview"
-            ? (carreraModal?.descripcion ?? "Información de la carrera.")
+            ? carreraModal
+              ? `${CARRERA_MODALIDAD_LABELS[carreraModal.modalidad]} · ${carreraModal.tituloOtorgado ?? "Carrera del instituto"}`
+              : "Información de la carrera."
             : "Completá los datos que acepta la API. El slug y el estado los define el servidor."
         }
         icono={modal === "preview" ? <BookOpen size={20} /> : <Pencil size={20} />}

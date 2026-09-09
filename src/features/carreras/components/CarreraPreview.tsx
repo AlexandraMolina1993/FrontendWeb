@@ -20,14 +20,9 @@ export default function CarreraPreview({
       aria-label="Vista previa de la carrera"
     >
       <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-[#B78700]">
-            Vista previa pública
-          </p>
-          <p className="text-sm font-semibold text-slate-700">
-            {formatearActualizacion(carrera.updatedAt)}
-          </p>
-        </div>
+        <p className="text-sm font-semibold text-slate-700">
+          {formatearActualizacion(carrera.updatedAt)}
+        </p>
         <StatusBadge
           status={carrera.activa ? "publicado" : "inactivo"}
           label={carrera.activa ? "Publicada" : "Inactiva"}
@@ -36,7 +31,7 @@ export default function CarreraPreview({
       </div>
 
       <div className="p-4 sm:p-6">
-        <CarreraHeader carrera={carrera} />
+        <CarreraHeader carrera={carrera} mostrarNombre={false} />
       </div>
     </section>
   );
