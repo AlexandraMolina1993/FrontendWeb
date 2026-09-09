@@ -10,6 +10,7 @@ export const CARRERA_EJEMPLO_API: Carrera = {
   tituloOtorgado: "Tecnico Superior en Programacion",
   modalidad: "PRESENCIAL",
   activa: true,
+  imagenUrl: null,
   createdAt: "2026-09-04T21:40:43.481Z",
   updatedAt: "2026-09-04T21:40:43.481Z",
 };

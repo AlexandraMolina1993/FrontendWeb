@@ -92,17 +92,20 @@ export default function CarrerasAdminPage() {
     setErrorAccion(null);
   }
 
-  async function guardarCarrera(values: CarreraFormValues) {
+  async function guardarCarrera(values: CarreraFormValues, imagen?: File | null) {
     setGuardando(true);
     setErrorAccion(null);
 
     try {
       const payload = formularioACarreraInput(values);
 
-      if (modal === "editar" && carreraActiva) {
-        await carreraApi.actualizar(carreraActiva.id, payload);
-      } else {
-        await carreraApi.crear(payload);
+      const guardada =
+        modal === "editar" && carreraActiva
+          ? await carreraApi.actualizar(carreraActiva.id, payload)
+          : await carreraApi.crear(payload);
+
+      if (imagen) {
+        await carreraApi.subirImagen(guardada.id, imagen);
       }
 
       recargar();
@@ -227,7 +230,7 @@ export default function CarrerasAdminPage() {
           <CarreraForm
             key={carreraActiva?.id ?? "nueva"}
             carrera={modal === "editar" ? carreraActiva : null}
-            onSubmit={(values) => void guardarCarrera(values)}
+            onSubmit={(values, imagen) => void guardarCarrera(values, imagen)}
             onCancel={cerrarModal}
             cargando={guardando}
             sedesOpciones={sedesOpciones}

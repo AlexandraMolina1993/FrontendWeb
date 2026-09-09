@@ -9,6 +9,8 @@ import type {
 import {
   CARRERA_DURACION_MAX,
   CARRERA_DURACION_MIN,
+  CARRERA_IMAGEN_MAX_BYTES,
+  CARRERA_IMAGEN_TIPOS,
   CARRERA_MODALIDADES,
 } from "../types/carrera.types";
 
@@ -44,6 +46,7 @@ export function isCarrera(value: unknown): value is Carrera {
     (value.tituloOtorgado === null || typeof value.tituloOtorgado === "string") &&
     isCarreraModalidad(value.modalidad) &&
     typeof value.activa === "boolean" &&
+    (value.imagenUrl === null || typeof value.imagenUrl === "string") &&
     isIsoDate(value.createdAt) &&
     isIsoDate(value.updatedAt)
   );
@@ -178,4 +181,20 @@ export function formularioACarreraInput(values: CarreraFormValues): CarreraInput
 
 export function formularioEsValido(values: CarreraFormValues): boolean {
   return Object.keys(validarCarreraForm(values)).length === 0;
+}
+
+export function validarArchivoImagen(archivo: File): string | undefined {
+  if (
+    !CARRERA_IMAGEN_TIPOS.includes(
+      archivo.type as (typeof CARRERA_IMAGEN_TIPOS)[number],
+    )
+  ) {
+    return "La imagen tiene que ser JPEG, PNG, WebP o AVIF.";
+  }
+
+  if (archivo.size > CARRERA_IMAGEN_MAX_BYTES) {
+    return "La imagen no puede superar 5 MB.";
+  }
+
+  return undefined;
 }
