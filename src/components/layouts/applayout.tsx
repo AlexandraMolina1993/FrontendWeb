@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
-import { Bell, ChevronDown, PanelLeftOpen, Search } from "lucide-react";
+import { PanelLeftOpen } from "lucide-react";
 
 import FooterAdmin from "./footer";
 import SidebarAdmin from "./navbar";
@@ -58,7 +58,11 @@ export default function AdminLayout({
     <div className={adminLayoutStyle}>
       <SidebarAdmin
         abierto={sidebarAbierto}
-        cerrar={() => setSidebarAbierto(false)}
+        cerrar={() => {
+          if (!window.matchMedia("(min-width: 1024px)").matches) {
+            setSidebarAbierto(false);
+          }
+        }}
         items={items}
         logo={logo}
         nombreInstituto={nombreInstituto}
@@ -66,9 +70,9 @@ export default function AdminLayout({
       />
 
       <div
-        className={`${adminLayoutContentStyle} ${sidebarAbierto ? "lg:ml-72" : "lg:ml-0"}`}
+        className={`${adminLayoutContentStyle} pt-[74px] ${sidebarAbierto ? "lg:ml-72" : "lg:ml-0"}`}
       >
-        <header className="sticky top-0 z-30 flex h-[74px] items-center gap-3 border-b border-zinc-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+        <header className={`fixed inset-x-0 top-0 z-30 flex h-[74px] items-center gap-3 border-b border-zinc-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8 ${sidebarAbierto ? "lg:left-72" : "lg:left-0"}`}>
           <button
             type="button"
             onClick={() => setSidebarAbierto((actual) => !actual)}
@@ -87,34 +91,6 @@ export default function AdminLayout({
             {fechaCapitalizada}
           </p>
 
-          <div className="ml-auto hidden w-full max-w-sm items-center gap-2 rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-2.5 text-zinc-500 lg:flex">
-            <Search size={18} aria-hidden="true" />
-            <input
-              type="search"
-              aria-label="Buscar en esta sección"
-              placeholder="Buscar en esta sección..."
-              className="min-w-0 flex-1 bg-transparent text-sm text-zinc-800 outline-none placeholder:text-zinc-500"
-            />
-          </div>
-
-          <button
-            type="button"
-            className="relative ml-auto grid size-10 shrink-0 place-items-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-700 transition hover:border-[#E4B600] hover:bg-[#FFD21A] lg:ml-0"
-            aria-label="Ver notificaciones"
-          >
-            <Bell size={18} />
-            <span className="absolute right-2 top-2 size-1.5 rounded-full bg-[#E4B600]" />
-          </button>
-
-          <button
-            type="button"
-            className="flex shrink-0 items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-zinc-100"
-            aria-label="Abrir menú de administración"
-          >
-            <span className="grid size-9 place-items-center rounded-full bg-[#171717] text-xs font-black text-white">AD</span>
-            <span className="hidden text-sm font-bold text-zinc-900 md:block">Administración</span>
-            <ChevronDown className="hidden text-zinc-400 md:block" size={16} />
-          </button>
         </header>
 
         <main className={adminLayoutMainStyle}>
