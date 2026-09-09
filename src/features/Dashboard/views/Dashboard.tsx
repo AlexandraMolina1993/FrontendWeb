@@ -7,6 +7,7 @@ import {
   Users,
   Newspaper,
   Image,
+  Building2,
 } from "lucide-react";
 
 import AdminLayout from "../../../components/layouts/applayout";
@@ -166,9 +167,9 @@ export default function Dashboard() {
                   icono: GraduationCap,
                 },
                 {
-                  titulo: "Usuarios",
-                  ruta: "/admin/usuarios",
-                  icono: Users,
+                  titulo: "Sedes",
+                  ruta: "/admin/sedes",
+                  icono: Building2,
                 },
                 {
                   titulo: "Noticias",
