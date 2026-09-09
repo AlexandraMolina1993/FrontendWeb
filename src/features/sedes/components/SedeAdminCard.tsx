@@ -1,4 +1,5 @@
-import { Mail, MapPin, Pencil, Phone, Trash2 } from "lucide-react";
+import { BookOpenText, Mail, MapPin, Pencil, Phone, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import Card from "../../../components/ui/card";
 
@@ -18,6 +19,13 @@ export default function SedeAdminCard({ sede, onEdit, onDelete }: SedeAdminCardP
           <MapPin size={18} aria-hidden="true" />
         </span>
         <div className="flex gap-1">
+          <Link
+            to={`/admin/institucional?sedeId=${encodeURIComponent(sede.id)}`}
+            aria-label={`Información institucional de ${sede.nombre}`}
+            className="grid size-9 place-items-center rounded-lg text-[#C49200] transition hover:bg-[#FFF8D6]"
+          >
+            <BookOpenText size={16} aria-hidden="true" />
+          </Link>
           <button
             type="button"
             aria-label={`Editar ${sede.nombre}`}

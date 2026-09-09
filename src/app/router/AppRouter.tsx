@@ -29,6 +29,7 @@ export const AppRouter = () => {
         <Route path="/carreras" element={<CarrerasPage />} />
         <Route path="/carreras/:id" element={<CarreraDetallePage />} />
         <Route path="/institucional" element={<InstitucionalPage />} />
+        <Route path="/sedes/:sedeId/informacion-institucional" element={<InstitucionalPage />} />
         <Route path="/sedes" element={<SedesPage />} />
         <Route path="/sedes/:slug" element={<SedeDetallePage />} />
 

@@ -9,6 +9,7 @@ interface SedesGridProps {
   sedes: Sede[];
   cargando?: boolean;
   variante?: "publica" | "admin";
+  destino?: "sede" | "institucional";
   onEdit?: (sede: Sede) => void;
   onDelete?: (sede: Sede) => void;
 }
@@ -17,6 +18,7 @@ export default function SedesGrid({
   sedes,
   cargando = false,
   variante = "publica",
+  destino = "sede",
   onEdit,
   onDelete,
 }: SedesGridProps) {
@@ -29,7 +31,7 @@ export default function SedesGrid({
           {variante === "admin" && onEdit && onDelete ? (
             <SedeAdminCard sede={sede} onEdit={onEdit} onDelete={onDelete} />
           ) : (
-            <SedeCard sede={sede} />
+            <SedeCard sede={sede} destino={destino} />
           )}
         </div>
       ))}

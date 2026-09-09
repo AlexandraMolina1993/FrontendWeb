@@ -18,7 +18,8 @@ export const sedeApi = {
     return validateResponse(response.data, isSede, "La sede creada no tiene un formato válido.");
   },
   actualizar: async (id: string, data: Omit<Sede, "id">) => {
-    const response = await apiClient.put<unknown>(`/sedes/${id}`, data);
+    const { id: _id, ...payload } = data as Sede;
+    const response = await apiClient.patch<unknown>(`/sedes/${id}`, payload);
     return validateResponse(response.data, isSede, "La sede actualizada no tiene un formato válido.");
   },
   eliminar: async (id: string) => {
