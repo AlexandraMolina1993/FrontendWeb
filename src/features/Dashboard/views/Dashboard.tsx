@@ -167,7 +167,7 @@ export default function Dashboard() {
                   icono: GraduationCap,
                 },
                 {
-                  titulo: "Sede",
+                  titulo: "Sedes",
                   ruta: "/admin/sedes",
                   icono: Building2,
                 },
