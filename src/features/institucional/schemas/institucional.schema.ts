@@ -3,8 +3,8 @@ export interface Autoridad {
   nombre: string;
   cargo: string;
   imagen?: string | null;
-  orden: number;
-  descripcion: string;
+  orden?: number;
+  descripcion?: string | null;
 }
 
 export interface InformacionInstitucional {
@@ -65,8 +65,8 @@ export function isAutoridad(value: unknown): value is Autoridad {
     typeof item.nombre === "string" &&
     typeof item.cargo === "string" &&
     (item.imagen === undefined || item.imagen === null || typeof item.imagen === "string") &&
-    typeof item.orden === "number" &&
-    typeof item.descripcion === "string"
+    (item.orden === undefined || typeof item.orden === "number") &&
+    (item.descripcion === undefined || item.descripcion === null || typeof item.descripcion === "string")
   );
 }
 
