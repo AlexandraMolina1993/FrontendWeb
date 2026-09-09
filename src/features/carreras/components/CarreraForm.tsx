@@ -1,11 +1,13 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+
+import { ImagePlus } from "lucide-react";
 
 import Button from "../../../components/ui/button";
 import Input from "../../../components/ui/input";
 import Select from "../../../components/ui/select";
 import Textarea from "../../../components/ui/textarea";
 
-import { validarCarreraForm } from "../schemas/carrera.schema";
+import { validarArchivoImagen, validarCarreraForm } from "../schemas/carrera.schema";
 import type {
   Carrera,
   CarreraFormValues,
@@ -22,7 +24,7 @@ import {
 
 interface CarreraFormProps {
   carrera?: Partial<Carrera> | null;
-  onSubmit: (values: CarreraFormValues) => void;
+  onSubmit: (values: CarreraFormValues, imagen?: File | null) => void;
   onCancel?: () => void;
   cargando?: boolean;
   errores?: Partial<Record<keyof CarreraFormValues, string>>;
@@ -55,8 +57,18 @@ export default function CarreraForm({
   const [erroresLocales, setErroresLocales] = useState<
     Partial<Record<keyof CarreraFormValues, string>>
   >({});
+  const [imagen, setImagen] = useState<File | null>(null);
+  const [errorImagen, setErrorImagen] = useState<string | undefined>();
+  const [previewLocal, setPreviewLocal] = useState<string | null>(null);
 
   const erroresVisibles = { ...erroresLocales, ...errores };
+  const preview = previewLocal ?? carrera?.imagenUrl ?? null;
+
+  useEffect(() => {
+    return () => {
+      if (previewLocal) URL.revokeObjectURL(previewLocal);
+    };
+  }, [previewLocal]);
 
   function actualizar<K extends keyof CarreraFormValues>(
     campo: K,
@@ -75,7 +87,26 @@ export default function CarreraForm({
       return;
     }
 
-    onSubmit(values);
+    onSubmit(values, imagen);
+  }
+
+  function elegirImagen(archivo: File | undefined) {
+    if (!archivo) return;
+
+    const error = validarArchivoImagen(archivo);
+    setErrorImagen(error);
+
+    setPreviewLocal((actual) => {
+      if (actual) URL.revokeObjectURL(actual);
+      return error ? null : URL.createObjectURL(archivo);
+    });
+
+    if (error) {
+      setImagen(null);
+      return;
+    }
+
+    setImagen(archivo);
   }
 
   const sedeSeleccionada = values.sedes[0] ?? "";
@@ -169,6 +200,40 @@ export default function CarreraForm({
             error={erroresVisibles.descripcion}
             onChange={(event) => actualizar("descripcion", event.target.value)}
           />
+        </div>
+        <div className="sm:col-span-2 space-y-3">
+          <div>
+            <p className="text-sm font-semibold text-zinc-800">Imagen</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              JPEG, PNG, WebP o AVIF. Máximo 5 MB. Se sube después de guardar la
+              carrera.
+            </p>
+          </div>
+
+          {preview && (
+            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-[#171717]">
+              <img
+                src={preview}
+                alt={values.nombre || "Vista previa de la carrera"}
+                className="h-48 w-full object-cover"
+              />
+            </div>
+          )}
+
+          <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-700 transition hover:border-[#E4B600] hover:bg-[#FFD21A]/10">
+            <ImagePlus size={18} aria-hidden="true" />
+            {imagen ? imagen.name : "Elegir imagen"}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              className="sr-only"
+              disabled={cargando}
+              onChange={(event) => elegirImagen(event.target.files?.[0])}
+            />
+          </label>
+          {errorImagen && (
+            <p className="text-sm text-red-600">{errorImagen}</p>
+          )}
         </div>
       </div>
 

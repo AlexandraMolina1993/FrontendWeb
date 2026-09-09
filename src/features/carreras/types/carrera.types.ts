@@ -17,6 +17,7 @@ export interface Carrera {
   tituloOtorgado: string | null;
   modalidad: CarreraModalidad;
   activa: boolean;
+  imagenUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -73,6 +74,13 @@ export const CARRERA_MODALIDAD_LABELS: Record<CarreraModalidad, string> = {
 
 export const CARRERA_DURACION_MIN = 1;
 export const CARRERA_DURACION_MAX = 15;
+export const CARRERA_IMAGEN_MAX_BYTES = 5 * 1024 * 1024;
+export const CARRERA_IMAGEN_TIPOS = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+] as const;
 
 export const CARRERA_FORM_VACIO: CarreraFormValues = {
   nombre: "",

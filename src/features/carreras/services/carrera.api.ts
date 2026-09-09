@@ -123,6 +123,47 @@ export const carreraApi = {
   },
 
   /**
+   * Carga o reemplaza la imagen. Requiere ADMIN.
+   * PUT /api/carreras/{id}/imagen
+   */
+  subirImagen: async (id: string, archivo: File): Promise<Carrera> => {
+    assertId(id);
+
+    const formData = new FormData();
+    formData.append("imagen", archivo);
+
+    const response = await apiClient.put<unknown>(
+      `/carreras/${id}/imagen`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+
+    return validateResponse(
+      response.data,
+      isCarrera,
+      "La carrera con imagen no tiene el formato esperado.",
+    );
+  },
+
+  /**
+   * Saca la imagen. Requiere ADMIN.
+   * DELETE /api/carreras/{id}/imagen
+   */
+  quitarImagen: async (id: string): Promise<Carrera> => {
+    assertId(id);
+
+    const response = await apiClient.delete<unknown>(`/carreras/${id}/imagen`);
+
+    return validateResponse(
+      response.data,
+      isCarrera,
+      "La carrera sin imagen no tiene el formato esperado.",
+    );
+  },
+
+  /**
    * Sedes activas para asignar a una carrera.
    * GET /api/sedes
    */
