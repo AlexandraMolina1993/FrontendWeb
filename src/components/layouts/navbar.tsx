@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Building2,
@@ -149,6 +150,7 @@ export default function SidebarAdmin({
   rutaLogin = "/",
 }: SidebarAdminProps) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
 
@@ -160,6 +162,7 @@ export default function SidebarAdmin({
     try {
       setCerrandoSesion(true);
       await onCerrarSesion?.();
+      await logout();
       navigate(rutaLogin);
     } finally {
       setCerrandoSesion(false);
