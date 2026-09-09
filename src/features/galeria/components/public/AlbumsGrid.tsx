@@ -1,3 +1,8 @@
+import { Images } from "lucide-react";
+
+import EmptyState from "../../../../components/ui/emptyState";
+import ErrorState from "../../../../components/ui/errorState";
+import LoadingSpinner from "../../../../components/ui/loadingSpinner";
 import type { Album } from "../../types/album.types";
 import { AlbumCard } from "./AlbumCard";
 
@@ -5,31 +10,41 @@ interface Props {
   albums: Album[] | undefined;
   isLoading: boolean;
   isError: boolean;
+  onReintentar?: () => void;
 }
 
-export function AlbumsGrid({ albums, isLoading, isError }: Props) {
+export function AlbumsGrid({
+  albums,
+  isLoading,
+  isError,
+  onReintentar,
+}: Props) {
   if (isLoading) {
-    return <p className="text-center text-gray-500 py-12">Cargando...</p>;
+    return <LoadingSpinner text="Cargando álbumes..." />;
   }
 
   if (isError) {
     return (
-      <p className="text-center text-red-500 py-12">
-        No pudimos cargar la información.
-      </p>
+      <ErrorState
+        title="No pudimos cargar la galería"
+        description="Revisá tu conexión e intentá nuevamente."
+        onRetry={onReintentar}
+      />
     );
   }
 
   if (!albums || albums.length === 0) {
     return (
-      <p className="text-center text-gray-500 py-12">
-        Todavía no hay álbumes cargados.
-      </p>
+      <EmptyState
+        title="Todavía no hay álbumes"
+        description="Cuando se publiquen álbumes de fotos vas a verlos acá."
+        icon={<Images size={26} />}
+      />
     );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {albums.map((album) => (
         <AlbumCard key={album.id} album={album} />
       ))}

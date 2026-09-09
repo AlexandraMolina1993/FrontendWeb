@@ -15,15 +15,17 @@ export function ProximasActividades() {
   if (!proximas || proximas.length === 0) return null;
 
   return (
-    <div className="bg-gray-50 rounded-lg p-4 mb-6">
-      <h2 className="text-sm font-semibold text-gray-700 mb-3">
+    <div className="mb-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+      <h2 className="mb-3 text-sm font-bold text-zinc-700">
         Próximas actividades
       </h2>
       <ul className="space-y-2">
         {proximas.map((actividad) => (
           <li key={actividad.id} className="text-sm">
-            <span className="font-medium">{actividad.titulo}</span>
-            <span className="text-gray-400 ml-2">
+            <span className="font-semibold text-zinc-900">
+              {actividad.titulo}
+            </span>
+            <span className="ml-2 text-zinc-400">
               {new Date(actividad.fechaEvento!).toLocaleDateString("es-AR")}
             </span>
           </li>

@@ -1,108 +1,143 @@
+import { Images, Pencil, RotateCcw, Trash2 } from "lucide-react";
+
+import Button from "../../../../components/ui/button";
+import EmptyState from "../../../../components/ui/emptyState";
+import ErrorState from "../../../../components/ui/errorState";
+import LoadingSpinner from "../../../../components/ui/loadingSpinner";
+import StatusBadge from "../../../../components/ui/statusBadge";
+import Table from "../../../../components/ui/table";
+import type { TableColumn } from "../../../../components/ui/table";
 import type { Album } from "../../types/album.types";
 
 interface Props {
   albums: Album[] | undefined;
   isLoading: boolean;
   isError: boolean;
+  onReintentar?: () => void;
   onEditar: (album: Album) => void;
   onEliminar: (album: Album) => void;
   onGestionarFotos: (album: Album) => void;
   onReactivar: (album: Album) => void;
+  onCrear?: () => void;
 }
 
 export function AlbumsTable({
   albums,
   isLoading,
   isError,
+  onReintentar,
   onEditar,
   onEliminar,
   onGestionarFotos,
   onReactivar,
+  onCrear,
 }: Props) {
   if (isLoading) {
-    return <p className="text-center text-gray-500 py-8">Cargando...</p>;
+    return <LoadingSpinner text="Cargando álbumes..." />;
   }
 
   if (isError) {
     return (
-      <p className="text-center text-red-500 py-8">
-        No pudimos cargar los álbumes.
-      </p>
+      <ErrorState
+        title="No pudimos cargar los álbumes"
+        description="Revisá tu conexión e intentá nuevamente."
+        onRetry={onReintentar}
+      />
     );
   }
 
   if (!albums || albums.length === 0) {
     return (
-      <p className="text-center text-gray-500 py-8">
-        Todavía no hay álbumes cargados.
-      </p>
+      <EmptyState
+        title="Todavía no hay álbumes"
+        description="Creá un álbum para empezar a cargar fotografías."
+        icon={<Images size={26} />}
+        action={onCrear && <Button onClick={onCrear}>Nuevo álbum</Button>}
+      />
     );
   }
 
+  const columnas: TableColumn<Album>[] = [
+    {
+      key: "titulo",
+      header: "Título",
+      render: (album) => (
+        <span className="font-semibold text-zinc-900">{album.titulo}</span>
+      ),
+    },
+    {
+      key: "fecha",
+      header: "Fecha",
+      render: (album) => new Date(album.fecha).toLocaleDateString("es-AR"),
+    },
+    {
+      key: "fotos",
+      header: "Fotos",
+      render: (album) => album.cantidadImagenes,
+    },
+    {
+      key: "estado",
+      header: "Estado",
+      render: (album) => (
+        <StatusBadge status={album.activo ? "activo" : "inactivo"} />
+      ),
+    },
+    {
+      key: "acciones",
+      header: "Acciones",
+      headerClassName: "text-right",
+      cellClassName: "text-right",
+      render: (album) => (
+        <div className="flex justify-end gap-2">
+          <Button
+            className="h-9 px-3"
+            onClick={() => onGestionarFotos(album)}
+            aria-label={`Gestionar fotos de ${album.titulo}`}
+          >
+            <Images aria-hidden="true" />
+            Fotos
+          </Button>
+          <Button
+            variant="secondary"
+            className="h-9 px-3"
+            onClick={() => onEditar(album)}
+            aria-label={`Editar ${album.titulo}`}
+          >
+            <Pencil aria-hidden="true" />
+            Editar
+          </Button>
+          {album.activo ? (
+            <Button
+              variant="danger"
+              className="h-9 px-3"
+              onClick={() => onEliminar(album)}
+              aria-label={`Eliminar ${album.titulo}`}
+            >
+              <Trash2 aria-hidden="true" />
+              Eliminar
+            </Button>
+          ) : (
+            <Button
+              variant="correct"
+              className="h-9 px-3"
+              onClick={() => onReactivar(album)}
+              aria-label={`Reactivar ${album.titulo}`}
+            >
+              <RotateCcw aria-hidden="true" />
+              Reactivar
+            </Button>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <table className="w-full border-collapse">
-      <thead>
-        <tr className="border-b border-gray-200 text-left text-sm text-gray-500">
-          <th className="py-3 px-4">Título</th>
-          <th className="py-3 px-4">Fecha</th>
-          <th className="py-3 px-4">Fotos</th>
-          <th className="py-3 px-4">Estado</th>
-          <th className="py-3 px-4 text-right">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {albums.map((album) => (
-          <tr key={album.id} className="border-b border-gray-100">
-            <td className="py-3 px-4 font-medium">{album.titulo}</td>
-            <td className="py-3 px-4 text-sm text-gray-400">
-              {new Date(album.fecha).toLocaleDateString("es-AR")}
-            </td>
-            <td className="py-3 px-4 text-sm text-gray-600">
-              {album.cantidadImagenes}
-            </td>
-            <td className="py-3 px-4">
-              <span
-                className={`text-xs px-2 py-1 rounded-full ${
-                  album.activo
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                {album.activo ? "Activo" : "Inactivo"}
-              </span>
-            </td>
-            <td className="py-3 px-4 text-right space-x-2">
-  <button
-    onClick={() => onGestionarFotos(album)}
-    className="text-sm text-yellow-600 hover:underline"
-  >
-    Fotos
-  </button>
-  <button
-    onClick={() => onEditar(album)}
-    className="text-sm text-blue-600 hover:underline"
-  >
-    Editar
-  </button>
-  {album.activo ? (
-    <button
-      onClick={() => onEliminar(album)}
-      className="text-sm text-red-600 hover:underline"
-    >
-      Eliminar
-    </button>
-  ) : (
-    <button
-      onClick={() => onReactivar(album)}
-      className="text-sm text-green-600 hover:underline"
-    >
-      Reactivar
-    </button>
-  )}
-</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <Table
+      columns={columnas}
+      data={albums}
+      getRowKey={(album) => album.id}
+      caption="Listado de álbumes de la galería"
+    />
   );
 }
