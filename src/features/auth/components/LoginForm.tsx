@@ -15,7 +15,6 @@ export const LoginForm = () => {
     e.preventDefault();
     try {
       await login({ email, password });
-      navigate("/dashboard");
     } catch (err) {
       // El error se muestra visualmente gracias al hook
     }

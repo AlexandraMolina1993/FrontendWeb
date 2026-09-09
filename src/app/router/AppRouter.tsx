@@ -33,21 +33,26 @@ export const AppRouter = () => {
         <Route path="/sedes/:slug" element={<SedeDetallePage />} />
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/componentes" element={<Dashboard />} />
           <Route path="/dashboard/contacto" element={<ContactoAdminPage />} />
-          <Route path="/dashboard/preinscripciones" element={<PreinscripcionesPage />} />
+          <Route
+            path="/dashboard/preinscripciones"
+            element={<PreinscripcionesPage />}
+          />
           <Route path="/preinscripciones" element={<PreinscripcionesPage />} />
           <Route path="/admin/carreras" element={<CarrerasAdminPage />} />
-          <Route path="/admin/institucional" element={<InstitucionalAdminPage />} />
+          <Route
+            path="/admin/institucional"
+            element={<InstitucionalAdminPage />}
+          />
           <Route path="/admin/sedes" element={<SedesAdminPage />} />
           <Route path="/admin/sedes/nueva" element={<SedeNuevaPage />} />
           <Route path="/admin/usuarios" element={<UsuariosAdminPage />} />
           <Route path="/admin/noticias" element={<PublicacionesAdminPage />} />
           <Route path="/admin/galeria" element={<GaleriaAdminPage />} />
           <Route path="/admin/galeria/nueva" element={<GaleriaAdminPage />} />
-          <Route
-            path="/admin/contacto"
-            element={<ContactoAdminPage />}
-          />
+          <Route path="/admin/contacto" element={<ContactoAdminPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

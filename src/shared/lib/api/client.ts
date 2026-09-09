@@ -1,4 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
+import { useAuthStore } from "../../../app/stores/auth.store";
+import { tokenStorage } from "../../../features/auth/utils/token-storage";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 export const API_DOCS_URL = import.meta.env.VITE_API_DOCS_URL;
@@ -6,41 +8,36 @@ export const API_DOCS_URL = import.meta.env.VITE_API_DOCS_URL;
 export const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// Interceptor de Petición (Request): 
-// Se ejecuta ANTES de que cualquier petición salga hacia el servidor.
 apiClient.interceptors.request.use(
   (config) => {
-    // Buscamos el token de seguridad guardado en el navegador
-    const token = localStorage.getItem('token'); 
-    
-    // Si existe, se lo "inyectamos" a la cabecera para que el backend nos deje pasar
+    const token = tokenStorage.getToken();
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error),
 );
 
-// Interceptor de Respuesta (Response):
-// Se ejecuta CUANDO el servidor nos responde.
 apiClient.interceptors.response.use(
-  (response) => {
-    // Si todo salió bien, devolvemos la respuesta tal cual
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Si el backend nos da un error 401 (No autorizado / Token vencido)
-    if (error.response?.status === 401) {
-      console.error("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
-      // Aquí más adelante conectaremos la lógica de /api/Auth/Refresh
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      const token = tokenStorage.getToken();
+      const authorization = error.config?.headers?.Authorization;
+      const esLogin = error.config?.url === "/usuarios/login";
+
+      if (!esLogin && token && authorization === `Bearer ${token}`) {
+        useAuthStore.getState().logout();
+      }
     }
+
     return Promise.reject(error);
-  }
+  },
 );
