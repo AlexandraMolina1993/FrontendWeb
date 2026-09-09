@@ -1,10 +1,18 @@
 import type {
   Carrera,
   CarreraFormValues,
+  CarreraInput,
   CarreraListParams,
   CarreraModalidad,
+  SedeOpcion,
 } from "../types/carrera.types";
-import { CARRERA_MODALIDADES } from "../types/carrera.types";
+import {
+  CARRERA_DURACION_MAX,
+  CARRERA_DURACION_MIN,
+  CARRERA_IMAGEN_MAX_BYTES,
+  CARRERA_IMAGEN_TIPOS,
+  CARRERA_MODALIDADES,
+} from "../types/carrera.types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -38,6 +46,7 @@ export function isCarrera(value: unknown): value is Carrera {
     (value.tituloOtorgado === null || typeof value.tituloOtorgado === "string") &&
     isCarreraModalidad(value.modalidad) &&
     typeof value.activa === "boolean" &&
+    (value.imagenUrl === null || typeof value.imagenUrl === "string") &&
     isIsoDate(value.createdAt) &&
     isIsoDate(value.updatedAt)
   );
@@ -45,6 +54,24 @@ export function isCarrera(value: unknown): value is Carrera {
 
 export function isCarreraList(value: unknown): value is Carrera[] {
   return Array.isArray(value) && value.every(isCarrera);
+}
+
+export function isSedeOpcion(value: unknown): value is SedeOpcion {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.id === "string" &&
+    value.id.length > 0 &&
+    typeof value.nombre === "string" &&
+    value.nombre.length > 0 &&
+    (value.ciudad === undefined ||
+      value.ciudad === null ||
+      typeof value.ciudad === "string")
+  );
+}
+
+export function isSedeOpcionList(value: unknown): value is SedeOpcion[] {
+  return Array.isArray(value) && value.every(isSedeOpcion);
 }
 
 export function validarBusqueda(buscar: string): string | undefined {
@@ -103,8 +130,12 @@ export function validarCarreraForm(
   if (values.duracionAnios.trim()) {
     const anios = Number(values.duracionAnios);
 
-    if (!Number.isInteger(anios) || anios < 1 || anios > 10) {
-      errores.duracionAnios = "Ingresá un número entero entre 1 y 10.";
+    if (
+      !Number.isInteger(anios) ||
+      anios < CARRERA_DURACION_MIN ||
+      anios > CARRERA_DURACION_MAX
+    ) {
+      errores.duracionAnios = `Ingresá un número entero entre ${CARRERA_DURACION_MIN} y ${CARRERA_DURACION_MAX}.`;
     }
   }
 
@@ -112,9 +143,58 @@ export function validarCarreraForm(
     errores.modalidad = "Seleccioná una modalidad válida.";
   }
 
+  if (values.sedes.some((sede) => !sede.trim())) {
+    errores.sedes = "Cada sede tiene que tener un identificador válido.";
+  }
+
   return errores;
+}
+
+export function formularioACarreraInput(values: CarreraFormValues): CarreraInput {
+  const input: CarreraInput = {
+    nombre: values.nombre.trim(),
+    modalidad: values.modalidad,
+  };
+
+  const descripcion = values.descripcion.trim();
+  const titulo = values.tituloOtorgado.trim();
+  const sedes = values.sedes.map((sede) => sede.trim()).filter(Boolean);
+
+  if (descripcion) {
+    input.descripcion = descripcion;
+  }
+
+  if (titulo) {
+    input.tituloOtorgado = titulo;
+  }
+
+  if (values.duracionAnios.trim()) {
+    input.duracionAnios = Number(values.duracionAnios);
+  }
+
+  if (sedes.length > 0) {
+    input.sedes = sedes;
+  }
+
+  return input;
 }
 
 export function formularioEsValido(values: CarreraFormValues): boolean {
   return Object.keys(validarCarreraForm(values)).length === 0;
+}
+
+export function validarArchivoImagen(archivo: File): string | undefined {
+  if (
+    !CARRERA_IMAGEN_TIPOS.includes(
+      archivo.type as (typeof CARRERA_IMAGEN_TIPOS)[number],
+    )
+  ) {
+    return "La imagen tiene que ser JPEG, PNG, WebP o AVIF.";
+  }
+
+  if (archivo.size > CARRERA_IMAGEN_MAX_BYTES) {
+    return "La imagen no puede superar 5 MB.";
+  }
+
+  return undefined;
 }

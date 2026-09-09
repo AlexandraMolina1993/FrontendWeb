@@ -1,1 +1,4 @@
-import { Fragment } from "react"; export const AdminRoutes = () => { return <Fragment />; };
+import { Fragment } from "react";
+export const AdminRoutes = () => {
+  return <Fragment />;
+};

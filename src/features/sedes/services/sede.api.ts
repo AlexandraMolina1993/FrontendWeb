@@ -13,16 +13,13 @@ export const sedeApi = {
     return validateResponse(response.data, isSede, "El detalle de la sede no tiene un formato válido.");
   },
   crear: async (data: Omit<Sede, "id">) => {
-    const response = await apiClient.post<unknown>("/sedes", data);
+    const { id: _id, ...payload } = data as Sede;
+    const response = await apiClient.post<unknown>("/sedes", payload);
     return validateResponse(response.data, isSede, "La sede creada no tiene un formato válido.");
   },
   actualizar: async (id: string, data: Omit<Sede, "id">) => {
     const response = await apiClient.put<unknown>(`/sedes/${id}`, data);
     return validateResponse(response.data, isSede, "La sede actualizada no tiene un formato válido.");
-  },
-  cambiarEstado: async (id: string, activa: boolean) => {
-    const response = await apiClient.patch<unknown>(`/sedes/${id}/status`, { activa });
-    return validateResponse(response.data, isSede, "El estado de la sede no tiene un formato válido.");
   },
   eliminar: async (id: string) => {
     await apiClient.delete(`/sedes/${id}`);

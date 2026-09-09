@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Building2,
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 
 import type { ReactNode } from "react";
+import logoDefault from "../../assets/logo.jpg";
 
 import {
   sidebarAdminAccentStyle,
@@ -105,7 +107,7 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "contacto",
     label: "Contacto",
-    to: "/admin/contacto",
+    to: "/dashboard/contacto",
     icon: <MessageSquare />,
   },
   {
@@ -115,15 +117,6 @@ export const sidebarAdminItems: SidebarItem[] = [
     subitems: [
       { label: "Nueva sede", to: "/admin/sedes/nueva" },
       { label: "Ver sedes", to: "/admin/sedes" },
-    ],
-  },
-  {
-    id: "usuarios",
-    label: "Usuarios",
-    icon: <Users />,
-    subitems: [
-      { label: "Nuevo usuario", to: "/admin/usuarios/nuevo" },
-      { label: "Ver usuarios", to: "/admin/usuarios" },
     ],
   },
   {
@@ -150,13 +143,14 @@ export default function SidebarAdmin({
   abierto = false,
   cerrar,
   items = sidebarAdminItems,
-  logo,
+  logo = logoDefault,
   nombreInstituto = "Instituto Superior Villa del Rosario",
   nombreCorto = "ISVDR",
   onCerrarSesion,
-  rutaLogin = "/admin/login",
+  rutaLogin = "/",
 }: SidebarAdminProps) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
 
@@ -168,6 +162,7 @@ export default function SidebarAdmin({
     try {
       setCerrandoSesion(true);
       await onCerrarSesion?.();
+      await logout();
       navigate(rutaLogin);
     } finally {
       setCerrandoSesion(false);
@@ -196,7 +191,7 @@ export default function SidebarAdmin({
           <button
             type="button"
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/");
               cerrar?.();
             }}
             className={sidebarAdminBrandButtonStyle}
