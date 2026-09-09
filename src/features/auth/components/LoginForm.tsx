@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 1. Importamos el enrutador
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import "../../../index.css";
+import Button from "../../../components/ui/button";
+import Input from "../../../components/ui/input";
 
 export const LoginForm = () => {
   const { login, isLoading, error } = useAuth();
-  const navigate = useNavigate(); // 2. Inicializamos el hook de navegación
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,6 @@ export const LoginForm = () => {
     e.preventDefault();
     try {
       await login({ email, password });
-      // 3. Forzamos la redirección al panel de administración que creamos
       navigate("/dashboard");
     } catch (err) {
       // El error se muestra visualmente gracias al hook
@@ -22,65 +22,50 @@ export const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
+    <form onSubmit={handleSubmit} className="w-full">
       {error && (
-        <div style={{ color: "red", marginBottom: "1rem", fontWeight: "bold" }}>
-          {error}
-        </div>
+        <div className="text-red-600 mb-4 font-bold text-sm">{error}</div>
       )}
 
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="mb-4">
         <label
           htmlFor="email"
-          style={{ display: "block", marginBottom: "0.5rem" }}
+          className="block mb-2 text-sm font-medium text-[var(--color-dark,#1A1A1A)]"
         >
           Correo Electrónico
         </label>
-        <input
+        <Input
+          placeholder="Ingresa tu correo electrónico"
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={{
-            width: "100%",
-            padding: "0.8rem",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
+          className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:[#FFD21A] text-sm"
         />
       </div>
 
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div className="mb-6">
         <label
           htmlFor="password"
-          style={{ display: "block", marginBottom: "0.5rem" }}
+          className="block mb-2 text-sm font-medium text-[var(--color-dark,#1A1A1A)]"
         >
           Contraseña
         </label>
-        <input
+        <Input
+          placeholder="Ingresa tu contraseña"
           id="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{
-            width: "100%",
-            padding: "0.8rem",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
+          className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:[#FFD21A] text-sm"
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="btn-primary"
-        style={{ width: "100%", padding: "1rem" }}
-      >
+      <Button variant="primary" className="w-full">
         {isLoading ? "Verificando datos..." : "Ingresar al sistema"}
-      </button>
+      </Button>
     </form>
   );
 };
