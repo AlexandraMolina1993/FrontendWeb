@@ -23,9 +23,18 @@ export const institucionalApi = {
     const payload = {
       ...informacion,
       autoridades: autoridades.map((autoridad) => {
-        const { imagen, ...autoridadSinImagen } = autoridad;
+        const { imagen, descripcion, ...autoridadSinCamposOpcionales } = autoridad;
+        const autoridadSinImagen = {
+          ...autoridadSinCamposOpcionales,
+          nombre: autoridadSinCamposOpcionales.nombre.trim(),
+          cargo: autoridadSinCamposOpcionales.cargo.trim(),
+        };
         const { id: _autoridadId, ...autoridadPayload } = autoridadSinImagen as Autoridad;
-        return { ...autoridadPayload, ...(imagen ? { imagen } : {}) };
+        return {
+          ...autoridadPayload,
+          ...(imagen?.trim() ? { imagen: imagen.trim() } : {}),
+          ...(descripcion.trim() ? { descripcion: descripcion.trim() } : {}),
+        };
       }),
     };
     const response = await apiClient.put<unknown>(`/sedes/${encodeURIComponent(sedeId)}/informacion-institucional`, payload);
