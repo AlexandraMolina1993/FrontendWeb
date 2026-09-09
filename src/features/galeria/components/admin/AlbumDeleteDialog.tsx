@@ -1,7 +1,8 @@
+import ConfirmDialog from "../../../../components/ui/confirmDialog";
 import type { Album } from "../../types/album.types";
 
 interface Props {
-  album: Album;
+  album: Album | null;
   onConfirmar: () => void;
   onCancelar: () => void;
   isDeleting: boolean;
@@ -14,29 +15,15 @@ export function AlbumDeleteDialog({
   isDeleting,
 }: Props) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-        <h2 className="text-lg font-semibold mb-2">¿Eliminar este álbum?</h2>
-        <p className="text-sm text-gray-600 mb-6">
-          Vas a eliminar <strong>{album.titulo}</strong> ({album.cantidadImagenes}{" "}
-          fotos). Esta acción no se puede deshacer.
-        </p>
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onCancelar}
-            className="px-4 py-2 text-sm rounded-md border border-gray-300"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={onConfirmar}
-            disabled={isDeleting}
-            className="px-4 py-2 text-sm rounded-md bg-red-600 text-white disabled:opacity-50"
-          >
-            {isDeleting ? "Eliminando..." : "Eliminar"}
-          </button>
-        </div>
-      </div>
-    </div>
+    <ConfirmDialog
+      abierto={Boolean(album)}
+      titulo="¿Eliminar este álbum?"
+      descripcion={`Vas a eliminar "${album?.titulo ?? ""}" (${album?.cantidadImagenes ?? 0} fotos). Esta acción no se puede deshacer.`}
+      confirmar={onConfirmar}
+      cancelar={onCancelar}
+      textoConfirmar="Eliminar"
+      peligro
+      cargando={isDeleting}
+    />
   );
 }

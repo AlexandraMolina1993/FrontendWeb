@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { ImageOff } from "lucide-react";
+
 import type { Album } from "../../types/album.types";
 
 interface Props {
@@ -5,23 +8,40 @@ interface Props {
 }
 
 export function AlbumCard({ album }: Props) {
+  const [imagenFallo, setImagenFallo] = useState(false);
+
   const fecha = new Date(album.fecha).toLocaleDateString("es-AR", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 
+  const portada = album.portada?.url;
+  const mostrarPortada = Boolean(portada) && !imagenFallo;
+
   return (
-    <article className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
-      <img
-        src={album.portada?.url ?? ""}
-        alt={album.titulo}
-        className="w-full h-48 object-cover bg-gray-100"
-      />
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+      {mostrarPortada ? (
+        <img
+          src={portada}
+          alt={album.titulo}
+          className="h-48 w-full object-cover"
+          loading="lazy"
+          onError={() => setImagenFallo(true)}
+        />
+      ) : (
+        <div
+          className="grid h-48 w-full place-items-center bg-zinc-100 text-zinc-400"
+          aria-hidden="true"
+        >
+          <ImageOff size={28} />
+        </div>
+      )}
+
       <div className="p-4">
-        <h3 className="text-lg font-semibold mb-1">{album.titulo}</h3>
-        <p className="text-sm text-gray-600 mb-2">{album.descripcion}</p>
-        <div className="flex justify-between text-xs text-gray-400">
+        <h3 className="mb-1 text-lg font-bold text-zinc-900">{album.titulo}</h3>
+        <p className="mb-2 text-sm text-zinc-600">{album.descripcion}</p>
+        <div className="flex justify-between text-xs text-zinc-400">
           <span>{fecha}</span>
           <span>{album.cantidadImagenes} fotos</span>
         </div>
