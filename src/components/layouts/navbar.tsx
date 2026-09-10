@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import type { ReactNode } from "react";
 import {
   Building2,
   ChevronDown,
@@ -9,14 +10,13 @@ import {
   LayoutDashboard,
   LogOut,
   MapPin,
-  MessageSquare,
   Newspaper,
   PackageOpen,
-  Users,
   X,
 } from "lucide-react";
 
-import type { ReactNode } from "react";
+import { useAuth } from "../../features/auth/hooks/useAuth";
+import logoDefault from "../../assets/logo.jpg";
 
 import {
   sidebarAdminAccentStyle,
@@ -71,11 +71,8 @@ export const sidebarAdminItems: SidebarItem[] = [
   {
     id: "carreras",
     label: "Carreras",
+    to: "/admin/carreras",
     icon: <GraduationCap />,
-    subitems: [
-      { label: "Nueva carrera", to: "/admin/carreras/nueva" },
-      { label: "Ver carreras", to: "/admin/carreras" },
-    ],
   },
   {
     id: "preinscripciones",
@@ -95,8 +92,14 @@ export const sidebarAdminItems: SidebarItem[] = [
     section: "Comunicación",
     icon: <Image />,
     subitems: [
-      { label: "Agregar fotografías", to: "/admin/galeria/nueva" },
-      { label: "Administrar galería", to: "/admin/galeria" },
+      {
+        label: "Agregar fotografías",
+        to: "/admin/galeria/nueva",
+      },
+      {
+        label: "Administrar galería",
+        to: "/admin/galeria",
+      },
     ],
   },
   {
@@ -105,23 +108,19 @@ export const sidebarAdminItems: SidebarItem[] = [
     to: "/admin/noticias",
     icon: <Newspaper />,
   },
-
   {
     id: "sedes",
     label: "Sedes",
     icon: <MapPin />,
     subitems: [
-      { label: "Nueva sede", to: "/admin/sedes/nueva" },
-      { label: "Ver sedes", to: "/admin/sedes" },
-    ],
-  },
-  {
-    id: "usuarios",
-    label: "Usuarios",
-    icon: <Users />,
-    subitems: [
-      { label: "Nuevo usuario", to: "/admin/usuarios/nuevo" },
-      { label: "Ver usuarios", to: "/admin/usuarios" },
+      {
+        label: "Nueva sede",
+        to: "/admin/sedes/nueva",
+      },
+      {
+        label: "Ver sedes",
+        to: "/admin/sedes",
+      },
     ],
   },
   {
@@ -148,13 +147,15 @@ export default function SidebarAdmin({
   abierto = false,
   cerrar,
   items = sidebarAdminItems,
-  logo,
+  logo = logoDefault,
   nombreInstituto = "Instituto Superior Villa del Rosario",
   nombreCorto = "ISVDR",
   onCerrarSesion,
-  rutaLogin = "/admin/login",
+  rutaLogin = "/",
 }: SidebarAdminProps) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
   const [cerrandoSesion, setCerrandoSesion] = useState(false);
 
@@ -165,7 +166,10 @@ export default function SidebarAdmin({
   async function salir() {
     try {
       setCerrandoSesion(true);
+
       await onCerrarSesion?.();
+      await logout();
+
       navigate(rutaLogin);
     } finally {
       setCerrandoSesion(false);
@@ -185,7 +189,9 @@ export default function SidebarAdmin({
 
       <aside
         id="sidebar-admin"
-        className={`${sidebarAdminStyle} ${abierto ? sidebarAdminOpenStyle : sidebarAdminClosedStyle}`}
+        className={`${sidebarAdminStyle} ${
+          abierto ? sidebarAdminOpenStyle : sidebarAdminClosedStyle
+        }`}
         aria-label="Navegación administrativa"
       >
         <header className={sidebarAdminHeaderStyle}>
@@ -194,19 +200,26 @@ export default function SidebarAdmin({
           <button
             type="button"
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/");
               cerrar?.();
             }}
             className={sidebarAdminBrandButtonStyle}
           >
             {logo ? (
-              <img src={logo} alt="" className={sidebarAdminLogoStyle} />
+              <img
+                src={logo}
+                alt=""
+                className={sidebarAdminLogoStyle}
+              />
             ) : (
               <span
                 className={sidebarAdminLogoFallbackStyle}
                 aria-label={nombreCorto}
               >
-                <span className="grid grid-cols-2 gap-0.5" aria-hidden="true">
+                <span
+                  className="grid grid-cols-2 gap-0.5"
+                  aria-hidden="true"
+                >
                   <span className="size-3 bg-[#FFD21A]" />
                   <span className="size-3 bg-[#FFD21A]" />
                   <span className="size-3 bg-[#FFD21A]" />
@@ -216,8 +229,13 @@ export default function SidebarAdmin({
             )}
 
             <div className="min-w-0 pr-7 lg:pr-0">
-              <p className={sidebarAdminNameStyle}>{nombreInstituto}</p>
-              <p className={sidebarAdminSubtitleStyle}>Panel administrativo</p>
+              <p className={sidebarAdminNameStyle}>
+                {nombreInstituto}
+              </p>
+
+              <p className={sidebarAdminSubtitleStyle}>
+                Panel administrativo
+              </p>
             </div>
           </button>
 
@@ -235,26 +253,36 @@ export default function SidebarAdmin({
           {items.map((item, index) => {
             const tieneSubmenu = Boolean(item.subitems?.length);
             const estaAbierto = menuAbierto === item.id;
+
             const mostrarSeccion =
-              item.section && item.section !== items[index - 1]?.section;
+              item.section &&
+              item.section !== items[index - 1]?.section;
 
             if (!tieneSubmenu && item.to) {
               return (
                 <div key={item.id}>
                   {mostrarSeccion && (
-                    <p className={sidebarAdminTitleStyle}>{item.section}</p>
+                    <p className={sidebarAdminTitleStyle}>
+                      {item.section}
+                    </p>
                   )}
+
                   <NavLink
                     to={item.to}
                     end={item.end}
                     onClick={cerrar}
                     className={({ isActive }) =>
-                      `${sidebarAdminItemStyle} ${isActive ? sidebarAdminActiveItemStyle : ""}`
+                      `${sidebarAdminItemStyle} ${
+                        isActive
+                          ? sidebarAdminActiveItemStyle
+                          : ""
+                      }`
                     }
                   >
                     <span className={sidebarAdminItemIconStyle}>
                       {item.icon}
                     </span>
+
                     <span>{item.label}</span>
                   </NavLink>
                 </div>
@@ -264,18 +292,29 @@ export default function SidebarAdmin({
             return (
               <div key={item.id}>
                 {mostrarSeccion && (
-                  <p className={sidebarAdminTitleStyle}>{item.section}</p>
+                  <p className={sidebarAdminTitleStyle}>
+                    {item.section}
+                  </p>
                 )}
+
                 <button
                   type="button"
                   onClick={() => alternarMenu(item.id)}
                   className={sidebarAdminItemStyle}
                   aria-expanded={estaAbierto}
                 >
-                  <span className={sidebarAdminItemIconStyle}>{item.icon}</span>
+                  <span className={sidebarAdminItemIconStyle}>
+                    {item.icon}
+                  </span>
+
                   <span>{item.label}</span>
+
                   <ChevronDown
-                    className={`${sidebarAdminChevronStyle} ${estaAbierto ? sidebarAdminChevronOpenStyle : ""}`}
+                    className={`${sidebarAdminChevronStyle} ${
+                      estaAbierto
+                        ? sidebarAdminChevronOpenStyle
+                        : ""
+                    }`}
                     aria-hidden="true"
                   />
                 </button>
@@ -288,7 +327,11 @@ export default function SidebarAdmin({
                         to={subitem.to}
                         onClick={cerrar}
                         className={({ isActive }) =>
-                          `${sidebarAdminSubmenuItemStyle} ${isActive ? sidebarAdminActiveSubmenuItemStyle : ""}`
+                          `${sidebarAdminSubmenuItemStyle} ${
+                            isActive
+                              ? sidebarAdminActiveSubmenuItemStyle
+                              : ""
+                          }`
                         }
                       >
                         {subitem.label}
@@ -306,14 +349,17 @@ export default function SidebarAdmin({
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#FFD21A] text-xs font-black text-[#171717]">
               AD
             </span>
+
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold text-white">
                 Administración
               </p>
+
               <p className="truncate text-xs text-slate-400">
                 admin@isvdr.edu.ar
               </p>
             </div>
+
             <button
               type="button"
               onClick={() => void salir()}

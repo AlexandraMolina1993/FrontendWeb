@@ -1,0 +1,5 @@
+import { Mail, MapPin, Phone } from "lucide-react";
+import type { Sede } from "../schemas/sede.schema";
+export default function SedeDetail({ sede }: { sede: Sede }) {
+  return <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]"><div className="overflow-hidden rounded-3xl bg-[#171717]"><div className="h-64"><div className="grid h-full place-items-center text-[#FFD21A]"><MapPin size={56} /></div></div><div className="p-7 text-white"><h1 className="text-4xl font-black">{sede.nombre}</h1></div></div><div className="space-y-5"><div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm"><h2 className="text-xl font-black">Información de contacto</h2><p className="mt-4 flex gap-3 text-sm text-slate-600"><MapPin size={18} className="text-[#C49200]" />{sede.direccion}, {sede.ciudad}, {sede.provincia}</p>{sede.telefono && <p className="mt-3 flex gap-3 text-sm text-slate-600"><Phone size={18} className="text-[#C49200]" />{sede.telefono}</p>}{sede.email && <p className="mt-3 flex gap-3 text-sm text-slate-600"><Mail size={18} className="text-[#C49200]" />{sede.email}</p>}</div></div></div>;
+}

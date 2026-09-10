@@ -1,0 +1,32 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { MapPin } from "lucide-react";
+import AdminLayout from "../../../../components/layouts/applayout";
+import Card from "../../../../components/ui/card";
+import ErrorState from "../../../../components/ui/errorState";
+import { getApiErrorMessage } from "../../../../shared/lib/api/api-error";
+import { useInstitucional } from "../../hooks/useInstitucional";
+import { useSedes } from "../../../sedes/hooks/useSedes";
+import { institucionalApi } from "../../services/institucional.api";
+import { AUTORIDAD_FORM_VACIO, type AutoridadFormValues, type InstitucionalFormValues } from "../../schemas/institucional.schema";
+import { validarAutoridad, validarInstitucional } from "../../schemas/institucional.schema";
+import InstitucionalForm from "../../components/InstitucionalForm";
+import AutoridadesForm from "../../components/AutoridadesForm";
+import AutoridadesList from "../../components/AutoridadesList";
+
+export default function InstitucionalAdminPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sedeId = searchParams.get("sedeId") ?? undefined;
+  const { sedes } = useSedes();
+  const { informacion, autoridades, cargando, error, recargar, setInformacion, setAutoridades } = useInstitucional(sedeId);
+  const [guardando, setGuardando] = useState(false);
+  const [autoridad, setAutoridad] = useState<AutoridadFormValues>(AUTORIDAD_FORM_VACIO);
+  const [autoridadEditandoId, setAutoridadEditandoId] = useState<string | null>(null);
+  const valores: InstitucionalFormValues = { nombre: informacion.nombre, lema: informacion.lema, historia: informacion.historia, mision: informacion.mision, vision: informacion.vision };
+  async function guardarInformacion() { const errores = validarInstitucional(valores); if (Object.keys(errores).length) { window.alert(Object.values(errores)[0]); return; } if (!sedeId) { window.alert("Seleccioná una sede antes de guardar."); return; } setGuardando(true); try { const guardada = informacion.id ? await institucionalApi.actualizar(sedeId, { ...informacion, ...valores }) : await institucionalApi.crear(sedeId, valores); setInformacion(guardada); setAutoridades(guardada.autoridades); } catch (err) { window.alert(getApiErrorMessage(err)); } finally { setGuardando(false); } }
+  async function guardarAutoridad() { const errores = validarAutoridad(autoridad); if (Object.keys(errores).length) { window.alert(Object.values(errores)[0]); return; } if (!sedeId || !informacion.id) { window.alert("Guardá primero la información institucional de la sede."); return; } setGuardando(true); try { const autoridadesActualizadas = autoridadEditandoId ? autoridades.map((item) => item.id === autoridadEditandoId ? { ...autoridad, id: autoridadEditandoId } : item) : [...autoridades, autoridad]; const actualizada = await institucionalApi.actualizar(sedeId, { ...informacion, autoridades: autoridadesActualizadas }); setInformacion(actualizada); setAutoridades(actualizada.autoridades); setAutoridad(AUTORIDAD_FORM_VACIO); setAutoridadEditandoId(null); } catch (err) { window.alert(getApiErrorMessage(err)); } finally { setGuardando(false); } }
+  function editarAutoridad(item: (typeof autoridades)[number]) { setAutoridadEditandoId(item.id); setAutoridad({ nombre: item.nombre, cargo: item.cargo, imagen: item.imagen ?? "", orden: item.orden ?? 1, descripcion: item.descripcion ?? "" }); }
+  function cancelarEdicionAutoridad() { setAutoridadEditandoId(null); setAutoridad(AUTORIDAD_FORM_VACIO); }
+  async function eliminarAutoridad(id: string) { if (!window.confirm("¿Eliminar esta autoridad?")) return; if (!sedeId || !informacion.id) return; try { const actualizada = await institucionalApi.actualizar(sedeId, { ...informacion, autoridades: autoridades.filter((item) => item.id !== id) }); setInformacion(actualizada); setAutoridades(actualizada.autoridades); } catch (err) { window.alert(getApiErrorMessage(err)); } }
+  return <AdminLayout><div className="space-y-8 pb-8"><header><h1 className="text-3xl font-black text-zinc-950 sm:text-4xl">Información institucional</h1><p className="mt-2 text-sm text-zinc-500">Seleccioná una sede para crear o editar su información institucional.</p></header><section><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#C49200]">Sedes</p><h2 className="mt-2 text-2xl font-black text-[#171717]">Elegí una sede</h2><div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{sedes.map((sede) => { const seleccionada = sede.id === sedeId; return <Card key={sede.id} role="button" tabIndex={0} aria-pressed={seleccionada} onClick={() => setSearchParams({ sedeId: sede.id })} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSearchParams({ sedeId: sede.id }); } }} className={`cursor-pointer transition ${seleccionada ? "border-[#C49200] ring-2 ring-[#FFD21A]" : "hover:-translate-y-1 hover:border-[#FFD21A]"}`}><div className="flex items-start gap-4"><span className="grid size-11 shrink-0 place-items-center rounded-xl bg-[#FFD21A] text-[#171717]"><MapPin size={20} /></span><div><h3 className="text-lg font-black text-[#171717]">{sede.nombre}</h3><p className="mt-1 text-sm text-slate-500">{sede.direccion}</p><p className="mt-1 text-sm font-semibold text-[#C49200]">{sede.ciudad}, {sede.provincia}</p></div></div></Card>; })}</div>{!sedes.length && <p className="mt-5 text-sm text-slate-500">No hay sedes disponibles.</p>}</section>{error && <ErrorState title="No pudimos cargar la información" description={error} onRetry={recargar} />}{!cargando && sedeId && <><InstitucionalForm values={valores} onChange={(next) => setInformacion({ ...informacion, ...next })} onSubmit={guardarInformacion} guardando={guardando} /><section className="space-y-5"><div><h2 className="text-2xl font-black text-[#171717]">Autoridades</h2><p className="mt-1 text-sm text-slate-500">Ordená y mantené actualizado el equipo de gestión.</p></div><AutoridadesForm values={autoridad} onChange={setAutoridad} onCancel={cancelarEdicionAutoridad} editando={Boolean(autoridadEditandoId)} onSubmit={guardarAutoridad} guardando={guardando} /><AutoridadesList autoridades={autoridades} onEdit={editarAutoridad} onDelete={(item) => void eliminarAutoridad(item.id)} /></section></>}</div></AdminLayout>;
+}
