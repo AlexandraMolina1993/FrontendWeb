@@ -105,12 +105,7 @@ export const sidebarAdminItems: SidebarItem[] = [
     to: "/admin/noticias",
     icon: <Newspaper />,
   },
-  {
-    id: "contacto",
-    label: "Contacto",
-    to: "/admin/contacto",
-    icon: <MessageSquare />,
-  },
+
   {
     id: "sedes",
     label: "Sedes",
